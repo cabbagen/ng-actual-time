@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { LoginService } from './share/login.service';
 
 @Component({
   selector: 'app-chat',
@@ -8,11 +7,15 @@ import { LoginService } from './share/login.service';
 })
 export class ChatComponent implements OnInit {
 
-  constructor(private loginService: LoginService) { }
+  public username = 'xia';
 
-  ngOnInit() {
-    const result = this.loginService.login('1', '2');
-    console.log(result);
+  public appKey = '1234abc';
+
+  constructor() {
+  }
+
+  public ngOnInit() {
+    
   }
 
 }

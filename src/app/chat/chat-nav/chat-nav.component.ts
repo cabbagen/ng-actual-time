@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { ChatService } from '../share/chat.service';
 
 @Component({
   selector: 'app-chat-nav',
@@ -7,9 +8,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ChatNavComponent implements OnInit {
 
-  constructor() { }
+  @Input() appKey: string;
+
+  @Input() username: string;
+
+  public selfInfo = {};
+
+  constructor(private chatService: ChatService) { }
 
   ngOnInit() {
+    this.chatService.login(this.appKey, this.username)
+      .subscribe((result) => {
+        this.selfInfo = result.data;
+      });
   }
 
 }

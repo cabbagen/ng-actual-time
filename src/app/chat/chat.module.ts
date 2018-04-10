@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { ChatComponent } from './chat.component';
 import { ChatNavComponent } from './chat-nav/chat-nav.component';
-import { LoginService } from './share/login.service';
+import { ChatService } from './share/chat.service';
 
 @NgModule({
   declarations: [
@@ -9,7 +9,7 @@ import { LoginService } from './share/login.service';
     ChatNavComponent
   ],
   imports: [],
-  providers: [ LoginService ],
+  providers: [ ChatService ],
   bootstrap: [],
 })
 export class ChatModule { }

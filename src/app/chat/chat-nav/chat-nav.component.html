@@ -1,3 +1,14 @@
-<p>
-  {{selfInfo.username}}
-</p>
+
+<div class="chat-nav">
+  <div class="nav-search">
+    <nz-input [nzType]="'text'" [nzPlaceHolder]="'查询'" class="demo">
+      <ng-template #prefix>
+        <i class="anticon anticon-search"></i>
+      </ng-template>
+    </nz-input>
+  </div>
+  <div class="self-info">
+    <img [src]="domain + selfInfo.avator" />
+    <span>{{selfInfo.username}}</span>
+  </div>
+</div>

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ChatService } from '../share/chat.service';
+import { domain } from '../../config';
 
 @Component({
   selector: 'app-chat-nav',
@@ -14,11 +15,14 @@ export class ChatNavComponent implements OnInit {
 
   public selfInfo = {};
 
+  public domain: string = domain;
+
   constructor(private chatService: ChatService) { }
 
   ngOnInit() {
     this.chatService.login(this.appKey, this.username)
       .subscribe((result) => {
+        console.log(result.data);
         this.selfInfo = result.data;
       });
   }

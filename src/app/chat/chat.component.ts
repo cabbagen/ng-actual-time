@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ChatService } from './share/chat.service';
-import { domain } from '../config';
 
 @Component({
   selector: 'app-chat',
@@ -12,8 +11,6 @@ export class ChatComponent implements OnInit {
   private username = 'xia';
 
   private appKey = '1234abc';
-
-  public domain = domain;
 
   public selfInfo = {};
 

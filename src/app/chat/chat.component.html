@@ -1,65 +1,14 @@
-
 <div id="chat-background">
   <div class="chat">
-    <!-- <div class="chat-contacts-panel">
-      <div class="chat-self">
-          <nz-avatar
-            [nzShape]="'square'"
-            [nzSize]="'large'"
-            [nzIcon]="'user'"
-            [nzSrc]="domain + selfInfo.avator"
-          >
-          </nz-avatar>
-          <span>{{selfInfo.nickname}}</span>
-      </div>
-      <div class="chat-search">
-        <nz-input [nzType]="'text'" [nzPlaceHolder]="'查询'" [nzSize]="'large'">
-          <ng-template #prefix>
-            <i class="anticon anticon-search"></i>
-          </ng-template>
-        </nz-input>
-      </div>
-      <div class="chat-tab">
-        <div
-          class="chat-tab-item"        
-          *ngFor="let classname of ['anticon-message', 'anticon-solution', 'anticon-team'], let flag = index"
-          (click)="changeChatTab(flag)"
-          [class.selected]="currentTab === flag"
-        >
-          <i [class]="'anticon ' + classname"></i>
-        </div>
-      </div>
-      <ul class="chat-contacts">
-        <li *ngFor="let a of [1, 2, 3, 4]" class="chat-contact">
-          <div class="chat-contact-avator">
-            <nz-badge nzDot>
-              <ng-template #content>
-                <nz-avatar
-                  [nzShape]="'square'"
-                  [nzSize]="'large'"
-                  [nzIcon]="'user'"
-                  [nzSrc]="domain + selfInfo.avator"
-                >
-                </nz-avatar>
-              </ng-template>
-            </nz-badge>
-          </div>
-          <div class="chat-contact-info">
-            <div class="chat-contact-topic">
-              <span class="chat-contact-name">徐爱哦下</span>
-              <span class="chat-contact-time">12:23</span>
-            </div>
-            <div class="chat-contact-last-message">
-              <p>啊红色的尽快了解阿斯顿</p>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div> -->
-    <app-chat-contacts [selfInfo]="selfInfo" [currentTab]="currentTab"></app-chat-contacts>
+    <app-chat-contacts
+      [selfInfo]="selfInfo"
+      [currentTab]="currentTab"
+      (onChangeChatTab)="changeChatTab($event)"
+    >
+  </app-chat-contacts>
     <div class="chat-content">
       <div class="chat-room-panel">
-  
+        
       </div>
       <div class="chat-reply-panel">
   

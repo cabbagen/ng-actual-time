@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { domain } from '../../config';
 
 @Component({
@@ -12,11 +12,17 @@ export class ChatContactsComponent implements OnInit {
 
   @Input() currentTab: number;
 
+  @Output() onChangeChatTab = new EventEmitter<number>();
+
   public domain: string = domain;
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  public changeChatTab(currentTab: number) {
+    this.onChangeChatTab.emit(currentTab);
   }
 
 }

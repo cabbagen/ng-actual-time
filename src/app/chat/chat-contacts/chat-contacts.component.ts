@@ -12,6 +12,8 @@ export class ChatContactsComponent implements OnInit {
 
   @Input() currentTab: number;
 
+  @Input() currentContacts;
+
   @Output() onChangeChatTab = new EventEmitter<number>();
 
   public domain: string = domain;

@@ -8,15 +8,13 @@ import { ChatService } from './services/chat.service';
 })
 export class ChatComponent implements OnInit {
 
-  private username = 'xia';
-
-  private appKey = '1234abc';
-
   private tabIndexMap: { [key: number]: string } = {
     0: 'recentContacts',
     1: 'friends',
     2: 'groups',
   };
+
+  private chatSocket = null;
 
   public selfInfo = {};
 
@@ -28,16 +26,26 @@ export class ChatComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this.chatService.login(this.appKey, this.username)
-      .subscribe((result) => {
-        console.log('selfInfo', result.data);
-        this.selfInfo = result.data;
-        this.updateCurrentContacts(this.currentTab);
-      });
+    this.chatService.loginApplication().subscribe((result) => {
+      this.selfInfo = result.data;
+      this.updateCurrentContacts(this.currentTab);
+    });
+    
+    this.chatSocket = this.chatService.socketConnect();
+    this.emitMessage();
+    this.listenMessage();
   }
 
   private updateCurrentContacts(tabIndex: number) {
     this.currentContacts = this.selfInfo[this.tabIndexMap[tabIndex]] || [];
+  }
+
+  emitMessage() {
+    console.log('发送消息');
+  }
+
+  listenMessage() {
+    console.log('监听消息');
   }
 
   public changeChatTab(currentTab: number) {

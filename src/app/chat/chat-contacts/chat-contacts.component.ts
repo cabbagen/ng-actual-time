@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { domain } from '../../config';
 
 @Component({
   selector: 'app-chat-contacts',
@@ -15,8 +14,6 @@ export class ChatContactsComponent implements OnInit {
   @Input() currentContacts;
 
   @Output() onChangeChatTab = new EventEmitter<number>();
-
-  public domain: string = domain;
 
   constructor() { }
 

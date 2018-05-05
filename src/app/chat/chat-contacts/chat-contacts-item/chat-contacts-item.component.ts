@@ -12,6 +12,12 @@ export class ChatContactsItemComponent implements OnInit, OnChanges {
 
   @Input() currentTab;
 
+  private adapterMap: { [key: number]: string } = {
+    0: 'adapterRecentContacts',
+    1: 'adapterFriends',
+    2: 'adapterGroups',
+  };
+
   public adaptiveContacts: ContactsItem[] = [];
 
   constructor() { }
@@ -24,13 +30,7 @@ export class ChatContactsItemComponent implements OnInit, OnChanges {
   }
 
   currentContactsAdapter(currentTabIndex: number) {
-    const adapterMap = {
-      0: this.adapterRecentContacts.bind(this),
-      1: this.adapterFriends.bind(this),
-      2: this.adapterGroups.bind(this),
-    };
-
-    adapterMap[currentTabIndex]();
+    this[this.adapterMap[currentTabIndex]]();
   }
 
   adapterRecentContacts() {
@@ -63,5 +63,4 @@ export class ChatContactsItemComponent implements OnInit, OnChanges {
       return groupItem;
     });
   }
-
 }

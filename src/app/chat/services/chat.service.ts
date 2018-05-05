@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import * as querystring from 'querystring';
 import { catchError, retry } from 'rxjs/operators';
-import { domain } from '../../config';
+import { domain, chatSocketURL } from '../../config';
+import * as utils from '../../utils/utils';
 
 declare const window;
 
 @Injectable()
 export class ChatService {
-
-  private chatSocketURL = 'http://localhost:4000/chat';
 
   private chatSocket = null;
 
@@ -18,7 +16,7 @@ export class ChatService {
   }
 
   public loginApplication() {
-    const { appKey, username } = this.getQuery();
+    const { appKey, username } = utils.getQuery();
     
     if (!appKey || !username) {
       throw new Error("获取 IM 用户信息 请求参数 错误");
@@ -30,11 +28,7 @@ export class ChatService {
     .pipe(retry(3),catchError(this.handleError));
   }
 
-  public getQuery() {
-    return querystring.parse(window.location.search.slice(1));
-  }
-
-  public handleError(error: HttpErrorResponse) {
+  private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.log('An error occurred: ', error.error.message);
     } else {
@@ -50,8 +44,8 @@ export class ChatService {
   }
 
   public socketConnect() {
-    this.chatSocket = window.io.connect(this.chatSocketURL);
-    this.chatSocket.on('connect', function () {
+    this.chatSocket = window.io.connect(chatSocketURL);
+    this.chatSocket.on('connect', function() {
       console.log('websocket connect successful');
     });
 

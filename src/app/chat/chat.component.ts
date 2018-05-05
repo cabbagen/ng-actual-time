@@ -20,7 +20,7 @@ export class ChatComponent implements OnInit {
 
   public currentContacts = [];
 
-  public currentTab: number  = 0;
+  public currentTab: number = 0;
 
   constructor(private chatService: ChatService) {
   }

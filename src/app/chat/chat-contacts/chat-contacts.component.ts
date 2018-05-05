@@ -17,7 +17,7 @@ export class ChatContactsComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
+  public ngOnInit() {
   }
 
   public changeChatTab(currentTab: number) {

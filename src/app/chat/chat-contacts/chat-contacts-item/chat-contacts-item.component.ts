@@ -22,23 +22,23 @@ export class ChatContactsItemComponent implements OnInit, OnChanges {
 
   constructor() { }
 
-  ngOnInit() {
+  public ngOnInit() {
   }
 
-  ngOnChanges() {
+  public ngOnChanges() {
     this.currentContactsAdapter(this.currentTab);
   }
 
-  currentContactsAdapter(currentTabIndex: number) {
+  private currentContactsAdapter(currentTabIndex: number) {
     this[this.adapterMap[currentTabIndex]]();
   }
 
-  adapterRecentContacts() {
+  private adapterRecentContacts() {
     // this.adaptiveContacts = this.currentContacts.map(())
     this.adaptiveContacts = [];
   }
 
-  adapterFriends() {
+  private adapterFriends() {
     this.adaptiveContacts = this.currentContacts.map((friend) => {
       const friendItem: ContactsItem = {
         nickname: friend.nickname,
@@ -51,7 +51,7 @@ export class ChatContactsItemComponent implements OnInit, OnChanges {
     });
   }
 
-  adapterGroups() {
+  private adapterGroups() {
     this.adaptiveContacts = this.currentContacts.map((group) => {
       const groupItem: ContactsItem = {
         nickname: group.group_name,

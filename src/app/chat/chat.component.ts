@@ -40,11 +40,11 @@ export class ChatComponent implements OnInit {
     this.currentContacts = this.selfInfo[this.tabIndexMap[tabIndex]] || [];
   }
 
-  emitMessage() {
+  public emitMessage() {
     console.log('发送消息');
   }
 
-  listenMessage() {
+  public listenMessage() {
     console.log('监听消息');
   }
 

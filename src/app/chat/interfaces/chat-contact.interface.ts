@@ -1,6 +1,6 @@
-export class ContactsItem {
+export interface ContactsItem {
   nickname: string;
-  id: number;
+  id: string;
   avator: string;
   information: string;
 }

@@ -5,25 +5,19 @@
       [currentTab]="currentTab"
       [currentContacts]="currentContacts"
       (onChangeChatTab)="changeChatTab($event)"
+      (onSelectContact)="selectContact($event)"
     >
     </app-chat-contacts>
     <div class="chat-content">
-      <div class="chat-room-panel">
-        <div class="chat-room-header">
-          hello world
-        </div>
-      </div>
-      <div class="chat-reply-panel">
-        <div class="chat-reply-content">
-          <textarea placeholder="请输入发送消息">this is a message</textarea>
-        </div>
-        <div class="chat-replay-opecation">
-          <span>Ctrl + Enter 键 发送消息</span>
-          <button nz-button [nzType]="'default'">
-            <span>发送消息</span>
-          </button>
-        </div>
-      </div>
+      <app-chat-room
+        [currentContact]="currentContact"
+      >
+      </app-chat-room>
+      <app-chat-reply
+        (onSendMessage)="sendMessage($event)"
+      >
+
+      </app-chat-reply>
     </div>
   </div>
 </div>

@@ -1,0 +1,7 @@
+.chat-room-panel .chat-room-header {
+  height: 50px;
+  line-height: 50px;
+  padding: 0 10px;
+  border-bottom: 1px solid #eeeeee;
+  text-align: center
+}

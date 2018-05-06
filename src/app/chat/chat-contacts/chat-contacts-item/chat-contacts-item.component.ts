@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
-import { ContactsItem } from './chat-contacts-item.interface'; 
+import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
+import { ContactsItem } from '../../interfaces/chat-contact.interface'; 
 
 @Component({
   selector: 'app-chat-contacts-item',
@@ -11,6 +11,8 @@ export class ChatContactsItemComponent implements OnInit, OnChanges {
   @Input() currentContacts;
 
   @Input() currentTab;
+
+  @Output() selectContact = new EventEmitter<ContactsItem>();
 
   private adapterMap: { [key: number]: string } = {
     0: 'adapterRecentContacts',
@@ -44,7 +46,7 @@ export class ChatContactsItemComponent implements OnInit, OnChanges {
         nickname: friend.nickname,
         id: friend._id,
         avator: friend.avator,
-        information: friend.extra
+        information: friend.extra,
       };
 
       return friendItem;
@@ -62,5 +64,9 @@ export class ChatContactsItemComponent implements OnInit, OnChanges {
 
       return groupItem;
     });
+  }
+
+  public selectContactItem(contact: ContactsItem) {
+    this.selectContact.emit(contact);
   }
 }

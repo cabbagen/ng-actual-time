@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { ContactsItem } from '../interfaces/chat-contact.interface';
 
 @Component({
   selector: 'app-chat-contacts',
@@ -15,6 +16,8 @@ export class ChatContactsComponent implements OnInit {
 
   @Output() onChangeChatTab = new EventEmitter<number>();
 
+  @Output() onSelectContact = new EventEmitter<ContactsItem>();
+
   constructor() { }
 
   public ngOnInit() {
@@ -22,6 +25,10 @@ export class ChatContactsComponent implements OnInit {
 
   public changeChatTab(currentTab: number) {
     this.onChangeChatTab.emit(currentTab);
+  }
+
+  public selectContact(contact: ContactsItem) {
+    this.onSelectContact.emit(contact);
   }
 
 }

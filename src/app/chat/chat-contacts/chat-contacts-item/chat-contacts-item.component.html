@@ -1,5 +1,9 @@
 <ul class="chat-contacts">
-  <li *ngFor="let contactInfo of adaptiveContacts" class="chat-contact">
+  <li
+    *ngFor="let contactInfo of adaptiveContacts"
+    class="chat-contact"
+    (click)="selectContactItem(contactInfo)"
+  >
     <div class="chat-contact-avator">
       <nz-badge nzDot>
         <ng-template #content>

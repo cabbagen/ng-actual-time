@@ -1,34 +1,35 @@
 <div class="chat-contacts-panel">
-    <div class="chat-self">
-        <nz-avatar
-          [nzShape]="'square'"
-          [nzSize]="'large'"
-          [nzIcon]="'user'"
-          [nzSrc]="selfInfo.avator"
-        >
-        </nz-avatar>
-        <span>{{selfInfo.nickname}}</span>
-    </div>
-    <div class="chat-search">
-      <nz-input [nzType]="'text'" [nzPlaceHolder]="'查询'" [nzSize]="'large'">
-        <ng-template #prefix>
-          <i class="anticon anticon-search"></i>
-        </ng-template>
-      </nz-input>
-    </div>
-    <div class="chat-tab">
-      <div
-        class="chat-tab-item"        
-        *ngFor="let classname of ['anticon-message', 'anticon-solution', 'anticon-team'], let flag = index"
-        (click)="changeChatTab(flag)"
-        [class.selected]="currentTab === flag"
+  <div class="chat-self">
+      <nz-avatar
+        [nzShape]="'square'"
+        [nzSize]="'large'"
+        [nzIcon]="'user'"
+        [nzSrc]="selfInfo.avator"
       >
-        <i class="{{'anticon ' + classname}}"></i>
-      </div>
-    </div>
-    <app-chat-contacts-item
-      [currentContacts]="currentContacts"
-      [currentTab]="currentTab"
-    >
-    </app-chat-contacts-item>
+      </nz-avatar>
+      <span>{{selfInfo.nickname}}</span>
   </div>
+  <div class="chat-search">
+    <nz-input [nzType]="'text'" [nzPlaceHolder]="'查询'" [nzSize]="'large'">
+      <ng-template #prefix>
+        <i class="anticon anticon-search"></i>
+      </ng-template>
+    </nz-input>
+  </div>
+  <div class="chat-tab">
+    <div
+      class="chat-tab-item"        
+      *ngFor="let classname of ['anticon-message', 'anticon-solution', 'anticon-team'], let flag = index"
+      (click)="changeChatTab(flag)"
+      [class.selected]="currentTab === flag"
+    >
+      <i class="{{'anticon ' + classname}}"></i>
+    </div>
+  </div>
+  <app-chat-contacts-item
+    [currentContacts]="currentContacts"
+    [currentTab]="currentTab"
+    (selectContact)="selectContact($event)"
+  >
+  </app-chat-contacts-item>
+</div>

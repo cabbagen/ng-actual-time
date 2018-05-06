@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { NzModalService } from 'ng-zorro-antd';
 import { ChatService } from './services/chat.service';
+import { ContactsItem } from './interfaces/chat-contact.interface';
 
 @Component({
   selector: 'app-chat',
@@ -22,7 +24,14 @@ export class ChatComponent implements OnInit {
 
   public currentTab: number = 0;
 
-  constructor(private chatService: ChatService) {
+  public currentContact: ContactsItem = {
+    id: '',
+    avator: '',
+    nickname: '',
+    information: '',
+  };
+
+  constructor(private chatService: ChatService, private nzModalService: NzModalService) {
   }
 
   public ngOnInit() {
@@ -32,19 +41,17 @@ export class ChatComponent implements OnInit {
     });
     
     this.chatSocket = this.chatService.socketConnect();
-    this.emitMessage();
-    this.listenMessage();
   }
 
   private updateCurrentContacts(tabIndex: number) {
     this.currentContacts = this.selfInfo[this.tabIndexMap[tabIndex]] || [];
   }
 
-  public emitMessage() {
+  private emitMessage() {
     console.log('发送消息');
   }
 
-  public listenMessage() {
+  private listenMessage() {
     console.log('监听消息');
   }
 
@@ -53,4 +60,15 @@ export class ChatComponent implements OnInit {
     this.updateCurrentContacts(currentTab);
   }
 
+  public selectContact(contact: ContactsItem) {
+    this.currentContact = contact;
+  }
+
+  public sendMessage(message: string) {
+    if (this.currentContact.id === '') {
+      this.nzModalService.warning({ title: '警告提示', content: '请先选择聊天对象' });
+      return;
+    }
+
+  }
 }

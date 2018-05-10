@@ -18,6 +18,7 @@ export class ChatReplyComponent implements OnInit {
 
   public sendMessage() {
     this.onSendMessage.emit(this.content);
+    this.content = '';
   }
 
 }

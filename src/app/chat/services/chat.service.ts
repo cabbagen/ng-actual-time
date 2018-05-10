@@ -45,7 +45,7 @@ export class ChatService {
 
   public socketConnect() {
     this.chatSocket = window.io.connect(chatSocketURL);
-    this.chatSocket.on('connect', function() {
+    this.chatSocket.on('connect', () => {
       console.log('websocket connect successful');
     });
 

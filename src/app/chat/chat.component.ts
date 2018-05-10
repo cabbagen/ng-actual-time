@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd';
 import { ChatService } from './services/chat.service';
 import { ContactsItem } from './interfaces/chat-contact.interface';
+import { ChatMessage } from './interfaces/chat-message.interface';
+import * as utils from '../utils/utils';
 
 @Component({
   selector: 'app-chat',
@@ -16,11 +18,13 @@ export class ChatComponent implements OnInit {
     2: 'groups',
   };
 
-  private chatSocket = null;
+  private chatSocket: any = null;
 
-  public selfInfo = {};
+  private appKey: any = utils.getQuery().appKey;
 
-  public currentContacts = [];
+  public selfInfo: any = {};
+
+  public currentContacts: any[] = [];
 
   public currentTab: number = 0;
 
@@ -36,23 +40,31 @@ export class ChatComponent implements OnInit {
 
   public ngOnInit() {
     this.chatService.loginApplication().subscribe((result) => {
+      const chatInitInfo = { type: 1, content: 'init', from: result.data._id, to: '' };
+
       this.selfInfo = result.data;
+      this.chatSocket = this.chatService.socketConnect();
+      
       this.updateCurrentContacts(this.currentTab);
+      this.emitMessage('chat_init', chatInitInfo);
+      this.listenMessage('chat_private');    
     });
-    
-    this.chatSocket = this.chatService.socketConnect();
   }
 
   private updateCurrentContacts(tabIndex: number) {
     this.currentContacts = this.selfInfo[this.tabIndexMap[tabIndex]] || [];
   }
 
-  private emitMessage() {
+  private emitMessage(event: string, data: ChatMessage) {
     console.log('发送消息');
+    this.chatSocket.emit(event, this.appKey, data);
   }
 
-  private listenMessage() {
+  private listenMessage(event: string) {
     console.log('监听消息');
+    this.chatSocket.on(event, function(data) {
+      console.log('接收到的数据', data);
+    })
   }
 
   public changeChatTab(currentTab: number) {
@@ -70,5 +82,13 @@ export class ChatComponent implements OnInit {
       return;
     }
 
+    const msgItem: ChatMessage = {
+      type: 1,
+      content: message,
+      from: this.selfInfo._id,
+      to: this.currentContact.id,
+    };
+
+    this.emitMessage('chat_private', msgItem);
   }
 }

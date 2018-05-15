@@ -1,6 +1,10 @@
 <div class="chat-reply-panel">
   <div class="chat-reply-content">
-    <textarea placeholder="请输入发送消息" [(ngModel)]="content"></textarea>
+    <textarea
+      placeholder="请输入发送消息"
+      [(ngModel)]="content"
+      (keypress)="handleKeypress($event)"
+    ></textarea>
   </div>
   <div class="chat-replay-opecation">
     <span>Ctrl + Enter 键 发送消息</span>

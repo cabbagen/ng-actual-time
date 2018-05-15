@@ -21,4 +21,10 @@ export class ChatReplyComponent implements OnInit {
     this.content = '';
   }
 
+  public handleKeypress(event: any) {
+    if (event.keyCode === 13 && event.ctrlKey) {
+      this.sendMessage();
+    }
+  }
+
 }

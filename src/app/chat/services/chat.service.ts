@@ -16,14 +16,14 @@ export class ChatService {
   }
 
   public loginApplication() {
-    const { appKey, username } = utils.getQuery();
+    const { appkey, id } = utils.getQuery();
     
-    if (!appKey || !username) {
+    if (!appkey || !id) {
       throw new Error("获取 IM 用户信息 请求参数 错误");
     }
 
     return this.http.get(`${domain}/getContactInfo`, {
-      params: { appKey, username },
+      params: { appkey, id },
     })
     .pipe(retry(3),catchError(this.handleError));
   }

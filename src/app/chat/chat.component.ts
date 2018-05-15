@@ -20,7 +20,7 @@ export class ChatComponent implements OnInit {
 
   private chatSocket: any = null;
 
-  private appKey: any = utils.getQuery().appKey;
+  private appkey: any = utils.getQuery().appkey;
 
   public selfInfo: any = {};
 
@@ -57,7 +57,7 @@ export class ChatComponent implements OnInit {
 
   private emitMessage(event: string, data: ChatMessage) {
     console.log('发送消息');
-    this.chatSocket.emit(event, this.appKey, data);
+    this.chatSocket.emit(event, this.appkey, data);
   }
 
   private listenMessage(event: string) {

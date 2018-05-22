@@ -44,9 +44,11 @@ export class ChatService {
   }
 
   public socketConnect() {
+    const { appkey, id } = utils.getQuery();
     this.chatSocket = window.io.connect(chatSocketURL);
     this.chatSocket.on('connect', () => {
       console.log('websocket connect successful');
+      this.chatSocket.emit('on_line', appkey, id);
     });
 
     return this.chatSocket;

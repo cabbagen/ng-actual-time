@@ -40,14 +40,11 @@ export class ChatComponent implements OnInit {
 
   public ngOnInit() {
     this.chatService.loginApplication().subscribe((result) => {
-      const chatInitInfo = { type: 1, content: 'init', from: result.data._id, to: '' };
-
       this.selfInfo = result.data;
       this.chatSocket = this.chatService.socketConnect();
       
       this.updateCurrentContacts(this.currentTab);
-      this.emitMessage('chat_init', chatInitInfo);
-      this.listenMessage('chat_private');    
+      console.log('result:', result);
     });
   }
 

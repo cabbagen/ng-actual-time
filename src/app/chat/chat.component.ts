@@ -42,6 +42,7 @@ export class ChatComponent implements OnInit {
     this.chatService.loginApplication().subscribe((result) => {
       this.selfInfo = result.data;
       this.chatSocket = this.chatService.socketConnect();
+      this.listenMessage('chat_private');
       
       this.updateCurrentContacts(this.currentTab);
       console.log('result:', result);
@@ -82,8 +83,8 @@ export class ChatComponent implements OnInit {
     const msgItem: ChatMessage = {
       type: 1,
       content: message,
-      from: this.selfInfo._id,
-      to: this.currentContact.id,
+      source: this.selfInfo._id,
+      target: this.currentContact.id,
     };
 
     this.emitMessage('chat_private', msgItem);

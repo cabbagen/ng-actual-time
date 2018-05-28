@@ -1,6 +1,13 @@
 export interface ChatMessage {
   type: number;
-  from: string;
-  to: string;
+  source: string;
+  target: string;
   content: string;
 };
+
+export interface ChatGroupMessage {
+  type: number,
+  source: string,
+  target: string,
+  content: string,
+}

@@ -5,3 +5,40 @@
   border-bottom: 1px solid #eeeeee;
   text-align: center
 }
+.chat-room-panel .chat-room-content {
+  height: 370px;
+  overflow-y: scroll;
+}
+.chat-message-left, .chat-message-right {
+  width: 60%;
+  display: flex;
+  margin: 20px 0px;
+  padding: 0px 10px;
+}
+.chat-message-left {
+  float: left;
+}
+.chat-message-right {
+  justify-content: flex-end;
+  float: right;
+}
+.chat-message-left .chat-message-info {
+  margin-left: 10px;
+}
+.chat-message-right .chat-message-info {
+  margin-right: 10px;
+}
+.chat-message-right .chat-message-time {
+  text-align: right;
+}
+.chat-message-content {
+  border-radius: 3px;
+  padding: 5px;
+  line-height: 180%;
+}
+.chat-message-left .chat-message-content {
+  background-color: deepskyblue;
+}
+.chat-message-right .chat-message-content {
+  background-color: lawngreen;
+}

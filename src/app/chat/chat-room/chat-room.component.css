@@ -24,9 +24,15 @@
 }
 .chat-message-left .chat-message-info {
   margin-left: 10px;
+  position: relative;
+  top: 0px;
+  left: 0px;
 }
 .chat-message-right .chat-message-info {
   margin-right: 10px;
+  position: relative;
+  top: 0px;
+  left: 0px;
 }
 .chat-message-right .chat-message-time {
   text-align: right;
@@ -39,6 +45,32 @@
 .chat-message-left .chat-message-content {
   background-color: deepskyblue;
 }
+.chat-message-left .chat-message-content::before {
+  display: block;
+  content: "";
+  border-top: 5px solid transparent;
+  border-right: 13px solid deepskyblue;
+  border-bottom: 8px solid transparent;
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  left: -10px;
+  top: 23px;
+  transform: rotate(16deg);
+}
 .chat-message-right .chat-message-content {
   background-color: lawngreen;
+}
+.chat-message-right .chat-message-content::after {
+  display: block;
+  content: "";
+  border-top: 5px solid transparent;
+  border-left: 13px solid lawngreen;
+  border-bottom: 8px solid transparent;
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  right: -10px;
+  top: 23px;
+  transform: rotate(-16deg);
 }

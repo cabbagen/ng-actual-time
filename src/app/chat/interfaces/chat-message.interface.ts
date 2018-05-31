@@ -11,3 +11,8 @@ export interface ChatGroupMessage {
   target: string,
   content: string,
 }
+
+// export interface ChatFullMessage {
+//   type: number,
+
+// };

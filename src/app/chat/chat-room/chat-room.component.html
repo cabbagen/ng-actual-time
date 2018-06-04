@@ -1,56 +1,25 @@
 <div class="chat-room-panel">
+
   <div class="chat-room-header">
     {{currentContact.nickname}}
   </div>
-  <div class="chat-room-content">
-    <div class="chat-message-left">
-      <div class="chat-contact-avator">
-        <nz-avatar nzIcon="anticon anticon-user"></nz-avatar>
-      </div>
-      <div class="chat-message-info">
-        <p class="chat-message-time">2018-10-23 12:32:23</p>
-        <div class="chat-message-content">
-          this is message
-        </div>
-      </div>
-    </div>
-    <div class="chat-message-right">
-      <div class="chat-message-info">
-        <p class="chat-message-time">2018-10-23 12:32:23</p>
-        <div class="chat-message-content">
-          this is messagethis is messagethis is messagethis is messagethis is message
-          this is messagethis is messagethis is messagethis is messagethis is message
-          this is messagethis is messagethis is messagethis is messagethis is message
-          this is messagethis is messagethis is messagethis is messagethis is message
-        </div>
-      </div>
-      <div class="chat-contact-avator">
-        <nz-avatar nzIcon="anticon anticon-user"></nz-avatar>
-      </div>
-    </div>
 
-    <div class="chat-message-left">
-      <div class="chat-contact-avator">
+  <div class="chat-room-content">
+    <div
+      *ngFor="let messageInfo of currentMessages"
+      [class.chat-message-left]="!isMySelf(messageInfo)"
+      [class.chat-message-right]="isMySelf(messageInfo)"
+    >
+      <div *ngIf="!isMySelf(messageInfo)" class="chat-contact-avator">
         <nz-avatar nzIcon="anticon anticon-user"></nz-avatar>
       </div>
       <div class="chat-message-info">
-        <p class="chat-message-time">2018-10-23 12:32:23</p>
+        <p class="chat-message-time">{{messageInfo.time}}</p>
         <div class="chat-message-content">
-          this is message
+          {{messageInfo.content}}
         </div>
       </div>
-    </div>
-    <div class="chat-message-right">
-      <div class="chat-message-info">
-        <p class="chat-message-time">2018-10-23 12:32:23</p>
-        <div class="chat-message-content">
-          this is messagethis is messagethis is messagethis is messagethis is message
-          this is messagethis is messagethis is messagethis is messagethis is message
-          this is messagethis is messagethis is messagethis is messagethis is message
-          this is messagethis is messagethis is messagethis is messagethis is message
-        </div>
-      </div>
-      <div class="chat-contact-avator">
+      <div *ngIf="isMySelf(messageInfo)" class="chat-contact-avator">
         <nz-avatar nzIcon="anticon anticon-user"></nz-avatar>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { Component, OnInit, group } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd';
 import { ChatService } from './services/chat.service';
 import { ContactsItem } from './interfaces/chat-contact.interface';
+import { Channel } from './interfaces/chat-channel.interface';
 import { ChatMessage, ChatFullMessage } from './interfaces/chat-message.interface';
 import * as utils from '../utils/utils';
 
@@ -35,7 +36,9 @@ export class ChatComponent implements OnInit {
     information: '',
   };
 
-  public messageQueue: ChatFullMessage[] = [];
+  public currentMessages: ChatFullMessage[] = [];
+
+  private chatChannelCenter: Channel = {};
 
   constructor(private chatService: ChatService, private nzModalService: NzModalService) {
   }
@@ -89,10 +92,9 @@ export class ChatComponent implements OnInit {
 
   private listenMessage(event: string): void {
     this.chatSocket.on(event, (data) => {
-      console.log('接收到的数据', data);
       const adaptedMessage = this.adapteMessage(data);
-      console.log('适配后的数据：', adaptedMessage);
-      this.messageQueue.push(adaptedMessage);
+      const channelId: string = adaptedMessage.target.id;
+      this.addChannelMessage(channelId, adaptedMessage);
     });
   }
 
@@ -107,6 +109,15 @@ export class ChatComponent implements OnInit {
     return adaptedMessage;
   }
 
+  private addChannelMessage(channelId: string, message: ChatFullMessage): void {
+    if (typeof this.chatChannelCenter[channelId] !== 'undefined') {
+      this.chatChannelCenter[channelId].push(message);
+    } else {
+      this.chatChannelCenter[channelId] = [message];      
+    }
+    this.currentMessages.push(message);
+  }
+
   public changeChatTab(currentTab: number): void {
     this.currentTab = currentTab;
     this.updateCurrentContacts(currentTab);
@@ -114,6 +125,7 @@ export class ChatComponent implements OnInit {
 
   public selectContact(contact: ContactsItem): void {
     this.currentContact = contact;
+    this.currentMessages = this.chatChannelCenter[contact.id] || [];
   }
 
   public sendMessage(message: string): void {

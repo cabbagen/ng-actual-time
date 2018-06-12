@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, DoCheck } from '@angular/core';
 import { ContactsItem } from '../interfaces/chat-contact.interface';
 import { ChatFullMessage } from '../interfaces/chat-message.interface';
+import { formatTime } from '../../utils/utils';
 
 @Component({
   selector: 'app-chat-room',
@@ -21,12 +22,16 @@ export class ChatRoomComponent implements OnInit, DoCheck {
   }
 
   ngDoCheck() {
-    console.log(this.selfInfo);
+    // console.log(this.selfInfo);
   }
 
   isMySelf(chatFullMessage: ChatFullMessage): boolean {
     const source: ContactsItem = chatFullMessage.source;
     return this.selfInfo._id === source.id;
+  }
+
+  formatTime(time): string {
+    return formatTime(time);
   }
 
 }

@@ -14,7 +14,7 @@
         <nz-avatar nzIcon="anticon anticon-user"></nz-avatar>
       </div>
       <div class="chat-message-info">
-        <p class="chat-message-time">{{messageInfo.time}}</p>
+        <p class="chat-message-time">{{this.formatTime(messageInfo.time)}}</p>
         <div class="chat-message-content">
           {{messageInfo.content}}
         </div>

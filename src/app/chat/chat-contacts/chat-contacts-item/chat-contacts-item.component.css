@@ -25,3 +25,9 @@
 .chat-contact-last-message {
   margin-top: 5px;
 }
+.chat-contact-last-message p {
+  width: 188px;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}

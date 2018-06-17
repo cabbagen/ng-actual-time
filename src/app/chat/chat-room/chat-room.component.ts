@@ -23,6 +23,16 @@ export class ChatRoomComponent implements OnInit, DoCheck {
 
   ngDoCheck() {
     // console.log(this.selfInfo);
+    this.handleChatRoomScrollToBottom();
+  }
+
+  handleChatRoomScrollToBottom(): void {
+    const element: Element = document.getElementById('chat-room-content');
+    const needDistanceToBottom: number = element.scrollHeight - element.clientHeight;
+
+    if (needDistanceToBottom > 0) {
+      element.scrollTop = needDistanceToBottom;
+    }
   }
 
   isMySelf(chatFullMessage: ChatFullMessage): boolean {
@@ -33,5 +43,4 @@ export class ChatRoomComponent implements OnInit, DoCheck {
   formatTime(time): string {
     return formatTime(time);
   }
-
 }

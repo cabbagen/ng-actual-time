@@ -3,4 +3,6 @@ export interface ContactsItem {
   id: string;
   avator: string;
   information: string;
+  unReadMessages?: number;
+  lastTime?: string;
 }

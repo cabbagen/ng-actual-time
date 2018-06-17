@@ -58,8 +58,19 @@ export class ChatComponent implements OnInit {
     this.currentContacts = this[func](this.selfInfo[name]) || [];
   }
 
-  private adapteRecentContacts() {
-    // - 暂时留空
+  private adapteRecentContacts(recentContacts: any[]) {
+    return recentContacts.map((contact) => {
+      const adaptedContact: ContactsItem = {
+        nickname: contact.last_target[0].nickname,
+        id: contact.last_target[0]._id,
+        avator: contact.last_target[0].avator,
+        information: contact.last_message,
+        unReadMessages: contact.total,
+        lastTime: utils.formatTime(contact.last_time),
+      };
+
+      return adaptedContact;
+    });
   }
 
   private adapteFriends(friends: any[]): ContactsItem[] {

@@ -5,7 +5,7 @@
     (click)="selectContactItem(contactInfo)"
   >
     <div class="chat-contact-avator">
-      <nz-badge nzDot>
+      <nz-badge [nzDot]="contactInfo.unReadMessages">
         <ng-template #content>
           <nz-avatar
             [nzShape]="'square'"
@@ -20,7 +20,7 @@
     <div class="chat-contact-info">
       <div class="chat-contact-topic">
         <span class="chat-contact-name">{{contactInfo.nickname}}</span>
-        <span class="chat-contact-time">12:23</span>
+        <span class="chat-contact-time">{{contactInfo.lastTime}}</span>
       </div>
       <div class="chat-contact-last-message">
         <p>{{contactInfo.information}}</p>

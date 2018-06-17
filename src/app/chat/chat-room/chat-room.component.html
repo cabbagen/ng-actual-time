@@ -4,7 +4,7 @@
     {{currentContact.nickname}}
   </div>
 
-  <div class="chat-room-content">
+  <div class="chat-room-content" id="chat-room-content">
     <div
       *ngFor="let messageInfo of currentMessages"
       [class.chat-message-left]="!isMySelf(messageInfo)"

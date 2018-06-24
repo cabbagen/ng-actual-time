@@ -22,7 +22,6 @@ export class ChatRoomComponent implements OnInit, DoCheck {
   }
 
   ngDoCheck() {
-    // console.log(this.selfInfo);
     this.handleChatRoomScrollToBottom();
   }
 

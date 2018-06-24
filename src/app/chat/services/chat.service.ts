@@ -18,13 +18,9 @@ export class ChatService {
   public loginApplication() {
     const { appkey, id } = utils.getQuery();
     
-    if (!appkey || !id) {
-      throw new Error("获取 IM 用户信息 请求参数 错误");
-    }
+    if (!appkey || !id) throw new Error("获取 IM 用户信息 请求参数 错误");
 
-    return this.http.get(`${domain}/getContactInfo`, {
-      params: { appkey, id },
-    })
+    return this.http.get(`${domain}/getContactInfo?${utils.serialize({appkey, id})}`)
     .pipe(retry(3),catchError(this.handleError));
   }
 
@@ -52,6 +48,12 @@ export class ChatService {
     });
 
     return this.chatSocket;
+  }
+
+  public createChatChannel(source: string, target: string) {
+    const { appkey } = utils.getQuery();
+    const params = { source, target, appkey };
+    return this.http.post(`${domain}/createChatChannel`, params).pipe(retry(3),catchError(this.handleError));
   }
 
 }

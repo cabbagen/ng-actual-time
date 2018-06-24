@@ -59,13 +59,18 @@ export class ChatComponent implements OnInit {
   }
 
   private adapteRecentContacts(recentContacts: any[]) {
+    const id: string = this.selfInfo._id || '';
+
     return recentContacts.map((contact) => {
+      const isSelf: boolean = id === contact.last_source[0]._id;
+      const otherContact: any = isSelf ? contact.last_target[0] : contact.last_source[0];
+
       const adaptedContact: ContactsItem = {
-        nickname: contact.last_target[0].nickname,
-        id: contact.last_target[0]._id,
-        avator: contact.last_target[0].avator,
+        nickname: otherContact.nickname,
+        id: otherContact._id,
+        avator: otherContact.avator,
         information: contact.last_message,
-        unReadMessages: contact.total,
+        unReadMessages: isSelf ? 0 : contact.total,
         lastTime: utils.formatTime(contact.last_time),
       };
 
@@ -106,6 +111,7 @@ export class ChatComponent implements OnInit {
       const adaptedMessage = this.adapteMessage(data);
       const channelId: string = adaptedMessage.target.id;
       this.addChannelMessage(channelId, adaptedMessage);
+      console.log('received message: ', data);
     });
   }
 
@@ -135,8 +141,13 @@ export class ChatComponent implements OnInit {
   }
 
   public selectContact(contact: ContactsItem): void {
-    this.currentContact = contact;
-    this.currentMessages = this.chatChannelCenter[contact.id] || [];
+    const source: string = this.selfInfo._id;
+    const target: string = contact.id;
+
+    this.chatService.createChatChannel(source, target).subscribe((result) => {
+      this.currentContact = contact;
+      this.currentMessages = this.chatChannelCenter[contact.id] || [];
+    });
   }
 
   public sendMessage(message: string): void {

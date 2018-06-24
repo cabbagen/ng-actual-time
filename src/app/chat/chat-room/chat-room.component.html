@@ -11,7 +11,11 @@
       [class.chat-message-right]="isMySelf(messageInfo)"
     >
       <div *ngIf="!isMySelf(messageInfo)" class="chat-contact-avator">
-        <nz-avatar nzIcon="anticon anticon-user"></nz-avatar>
+        <nz-avatar
+          [nzSrc]="messageInfo.target.avator"
+          nzIcon="anticon anticon-user"
+        >
+        </nz-avatar>
       </div>
       <div class="chat-message-info">
         <p class="chat-message-time">{{this.formatTime(messageInfo.time)}}</p>
@@ -20,7 +24,11 @@
         </div>
       </div>
       <div *ngIf="isMySelf(messageInfo)" class="chat-contact-avator">
-        <nz-avatar nzIcon="anticon anticon-user"></nz-avatar>
+        <nz-avatar
+          [nzSrc]="messageInfo.source.avator"
+          nzIcon="anticon anticon-user"
+        >
+        </nz-avatar>
       </div>
     </div>
   </div>

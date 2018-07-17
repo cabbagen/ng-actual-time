@@ -4,6 +4,7 @@ import { ChatService } from './services/chat.service';
 import { ContactsItem } from './interfaces/chat-contact.interface';
 import { Channel } from './interfaces/chat-channel.interface';
 import { ChatMessage, ChatFullMessage } from './interfaces/chat-message.interface';
+import { NoticeEventCenter, EventCenter } from './services/chat.event';
 import * as utils from '../utils/utils';
 
 @Component({
@@ -45,11 +46,10 @@ export class ChatComponent implements OnInit {
 
   public ngOnInit() {
     this.chatService.loginApplication().subscribe((result) => {
-      this.selfInfo = result.data;
-      this.chatSocket = this.chatService.socketConnect();
-      this.listenMessage('chat_private');
-      this.updateCurrentContacts(this.currentTab);
       console.log('result:', result);
+      this.selfInfo = result.data;
+      this.updateCurrentContacts(this.currentTab);
+      this.chatSocket = this.chatService.socketConnect();
     });
   }
 
@@ -102,38 +102,34 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  private emitMessage(event: string, data: ChatMessage): void {
-    this.chatSocket.emit(event, this.appkey, data);
-  }
+  // private listenMessage(event: string): void {
+  //   this.chatSocket.on(event, (data) => {
+  //     // const adaptedMessage = this.adapteMessage(data);
+  //     // const channelId: string = adaptedMessage.target.id;
+  //     // this.addChannelMessage(channelId, adaptedMessage);
+  //     console.log('received message: ', data);
+  //   });
+  // }
 
-  private listenMessage(event: string): void {
-    this.chatSocket.on(event, (data) => {
-      const adaptedMessage = this.adapteMessage(data);
-      const channelId: string = adaptedMessage.target.id;
-      this.addChannelMessage(channelId, adaptedMessage);
-      console.log('received message: ', data);
-    });
-  }
+  // private adapteMessage(data: any): ChatFullMessage {
+  //   const adaptedMessage: ChatFullMessage = {
+  //     type: data.message_type,
+  //     time: data.created_at,
+  //     content: data.message_content,
+  //     source: this.adapteFriends([data.message_source])[0],
+  //     target: this.adapteFriends([data.message_target])[0],
+  //   };
+  //   return adaptedMessage;
+  // }
 
-  private adapteMessage(data: any): ChatFullMessage {
-    const adaptedMessage: ChatFullMessage = {
-      type: data.message_type,
-      time: data.created_at,
-      content: data.message_content,
-      source: this.adapteFriends([data.message_source])[0],
-      target: this.adapteFriends([data.message_target])[0],
-    };
-    return adaptedMessage;
-  }
-
-  private addChannelMessage(channelId: string, message: ChatFullMessage): void {
-    if (typeof this.chatChannelCenter[channelId] !== 'undefined') {
-      this.chatChannelCenter[channelId].push(message);
-    } else {
-      this.chatChannelCenter[channelId] = [message];      
-    }
-    this.currentMessages.push(message);
-  }
+  // private addChannelMessage(channelId: string, message: ChatFullMessage): void {
+  //   if (typeof this.chatChannelCenter[channelId] !== 'undefined') {
+  //     this.chatChannelCenter[channelId].push(message);
+  //   } else {
+  //     this.chatChannelCenter[channelId] = [message];      
+  //   }
+  //   this.currentMessages.push(message);
+  // }
 
   public changeChatTab(currentTab: number): void {
     this.currentTab = currentTab;
@@ -141,13 +137,16 @@ export class ChatComponent implements OnInit {
   }
 
   public selectContact(contact: ContactsItem): void {
-    const source: string = this.selfInfo._id;
-    const target: string = contact.id;
+    const createChannelNoticeInfo: { [key: string]: string } = {
+      sourceId: this.selfInfo._id,
+      targetId: contact.id,
+      appkey: this.appkey,
+      channelType: this.currentTab.toString(),
+    };
 
-    this.chatService.createChatChannel(source, target).subscribe((result) => {
-      this.currentContact = contact;
-      this.currentMessages = this.chatChannelCenter[contact.id] || [];
-    });
+    this.currentContact = contact;
+    this.currentMessages = this.chatChannelCenter[contact.id] || [];
+    this.chatService.sendChatNotice({ type: NoticeEventCenter.notice_create_channel, data:createChannelNoticeInfo });
   }
 
   public sendMessage(message: string): void {
@@ -163,6 +162,11 @@ export class ChatComponent implements OnInit {
       target: this.currentContact.id,
     };
 
-    this.emitMessage('chat_private', msgItem);
+    // this.emitMessage(EventCenter.im_signal_chat, msgItem);
+    console.log('send message: ', msgItem);
   }
+
+  // private emitMessage(event: string, data: ChatMessage): void {
+  //   this.chatSocket.emit(event, this.appkey, data);
+  // }
 }

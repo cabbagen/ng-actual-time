@@ -46,10 +46,9 @@ export class ChatComponent implements OnInit {
 
   public ngOnInit() {
     this.chatService.loginApplication().subscribe((result) => {
-      console.log('result:', result);
       this.selfInfo = result.data;
+      this.chatSocket = this.chatService.socketConnect(this.registeChatSocketEventListener.bind(this));
       this.updateCurrentContacts(this.currentTab);
-      this.chatSocket = this.chatService.socketConnect();
     });
   }
 
@@ -102,42 +101,40 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  // private listenMessage(event: string): void {
-  //   this.chatSocket.on(event, (data) => {
-  //     // const adaptedMessage = this.adapteMessage(data);
-  //     // const channelId: string = adaptedMessage.target.id;
-  //     // this.addChannelMessage(channelId, adaptedMessage);
-  //     console.log('received message: ', data);
-  //   });
-  // }
+  private registeChatSocketEventListener() {
+    const events = [
+      { eventName: EventCenter.im_create_channel, responseCallBack: this.handleCreateChannel.bind(this) },
+      { eventName: EventCenter.im_signal_chat, responseCallBack: this.handleSignalChat.bind(this) },
+      { eventName: EventCenter.im_notice, responseCallBack: this.handleNotice.bind(this) },
+    ];
+    this.chatService.registeEventListener(events);
+  }
 
-  // private adapteMessage(data: any): ChatFullMessage {
-  //   const adaptedMessage: ChatFullMessage = {
-  //     type: data.message_type,
-  //     time: data.created_at,
-  //     content: data.message_content,
-  //     source: this.adapteFriends([data.message_source])[0],
-  //     target: this.adapteFriends([data.message_target])[0],
-  //   };
-  //   return adaptedMessage;
-  // }
+  // 处理创建聊天通道
+  private handleCreateChannel(data) {
+    // ... 这里不需要处理
+    console.log('创建通道响应: ', data);
+  }
 
-  // private addChannelMessage(channelId: string, message: ChatFullMessage): void {
-  //   if (typeof this.chatChannelCenter[channelId] !== 'undefined') {
-  //     this.chatChannelCenter[channelId].push(message);
-  //   } else {
-  //     this.chatChannelCenter[channelId] = [message];      
-  //   }
-  //   this.currentMessages.push(message);
-  // }
+  // 处理单聊接收消息
+  private handleSignalChat(data) {
+    // ... 
+    console.log('接收到消息：', data);
+  }
+
+  // 处理通知消息
+  private handleNotice() {
+    // ... 暂时搁置
+  }
 
   public changeChatTab(currentTab: number): void {
     this.currentTab = currentTab;
     this.updateCurrentContacts(currentTab);
   }
 
+  // 选择联系人，创建聊天通道
   public selectContact(contact: ContactsItem): void {
-    const createChannelNoticeInfo: { [key: string]: string } = {
+    const createChannelInfo: { [key: string]: string } = {
       sourceId: this.selfInfo._id,
       targetId: contact.id,
       appkey: this.appkey,
@@ -146,9 +143,10 @@ export class ChatComponent implements OnInit {
 
     this.currentContact = contact;
     this.currentMessages = this.chatChannelCenter[contact.id] || [];
-    this.chatService.sendChatNotice({ type: NoticeEventCenter.notice_create_channel, data:createChannelNoticeInfo });
+    this.chatService.createIMChannel(createChannelInfo);
   }
 
+  // 发送 IM 消息
   public sendMessage(message: string): void {
     if (this.currentContact.id === '') {
       this.nzModalService.warning({ title: '警告提示', content: '请先选择聊天对象' });
@@ -163,11 +161,6 @@ export class ChatComponent implements OnInit {
       appkey: this.appkey,
     };
 
-    this.emitMessage(EventCenter.im_signal_chat, msgItem);
-    console.log('send message: ', msgItem);
-  }
-
-  private emitMessage(event: string, data: ChatMessage): void {
-    this.chatSocket.emit(event, data);
+    this.chatService.sendSignalMessage(msgItem);
   }
 }

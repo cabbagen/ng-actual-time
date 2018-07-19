@@ -5,6 +5,7 @@ export interface ChatMessage {
   source: string;
   target: string;
   content: string;
+  appkey?: string;
 };
 
 export interface ChatGroupMessage {
@@ -12,6 +13,7 @@ export interface ChatGroupMessage {
   source: string,
   target: string,
   content: string,
+  appkey?: string;
 }
 
 export interface ChatFullMessage {

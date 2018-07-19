@@ -160,13 +160,14 @@ export class ChatComponent implements OnInit {
       content: message,
       source: this.selfInfo._id,
       target: this.currentContact.id,
+      appkey: this.appkey,
     };
 
-    // this.emitMessage(EventCenter.im_signal_chat, msgItem);
+    this.emitMessage(EventCenter.im_signal_chat, msgItem);
     console.log('send message: ', msgItem);
   }
 
-  // private emitMessage(event: string, data: ChatMessage): void {
-  //   this.chatSocket.emit(event, this.appkey, data);
-  // }
+  private emitMessage(event: string, data: ChatMessage): void {
+    this.chatSocket.emit(event, data);
+  }
 }

@@ -41,10 +41,13 @@ export class ChatService {
     console.log('start connect websocket');
     this.chatSocket.on(EventCenter.im_connection, () => {
       console.log('websocket connect successful');
-      this.chatSocket.emit(EventCenter.im_online, appkey, id);
+      this.chatSocket.emit(EventCenter.im_online, { appkey, id });
       this.chatSocket.on(EventCenter.im_notice, (data) => {
         this.listenChatNotice(data);
       });
+      this.chatSocket.on(EventCenter.im_signal_chat, (data) => {
+        console.log('signel data: ', data);
+      })
     });
 
     return this.chatSocket;

@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { domain, chatSocketURL } from '../../config';
 import { ChatMessage } from '../interfaces/chat-message.interface';
-import { EventCenter, NoticeEventCenter } from './chat.event';
+import { EventRegiste } from '../interfaces/chat.event.interface';
+import { EventCenter } from './chat.event';
 import * as utils from '../../utils/utils';
 
 declare const window;
@@ -37,7 +38,6 @@ export class ChatService {
   }
 
   public socketConnect(callback: Function) {
-    const { appkey, id } = utils.getQuery();
     this.chatSocket = window.io.connect(chatSocketURL);
     this.chatSocket.on(EventCenter.im_connection, () => {
       console.log('websocket connect successful');
@@ -49,9 +49,8 @@ export class ChatService {
   }
 
   // 注册监听事件
-  registeEventListener(events: {eventName: string, responseCallBack: Function}[]) {
+  registeEventListener(events: EventRegiste[]) {
     events.forEach((event) => {
-      console.log('=====>', this.chatSocket);
       this.chatSocket.on(event.eventName, event.responseCallBack);
     });
   }

@@ -4,7 +4,7 @@ import { ChatService } from './services/chat.service';
 import { ContactsItem } from './interfaces/chat-contact.interface';
 import { Channel } from './interfaces/chat-channel.interface';
 import { ChatMessage, ChatFullMessage } from './interfaces/chat-message.interface';
-import { NoticeEventCenter, EventCenter } from './services/chat.event';
+import { EventCenter } from './services/chat.event';
 import * as utils from '../utils/utils';
 
 @Component({
@@ -19,8 +19,6 @@ export class ChatComponent implements OnInit {
     1: { name: 'friends', func: 'adapteFriends' },
     2: { name: 'groups', func: 'adapteGroups' },
   };
-
-  private chatSocket: any = null;
 
   private appkey: any = utils.getQuery().appkey;
 
@@ -47,7 +45,7 @@ export class ChatComponent implements OnInit {
   public ngOnInit() {
     this.chatService.loginApplication().subscribe((result) => {
       this.selfInfo = result.data;
-      this.chatSocket = this.chatService.socketConnect(this.registeChatSocketEventListener.bind(this));
+      this.chatService.socketConnect(this.registeChatSocketEventListener.bind(this));
       this.updateCurrentContacts(this.currentTab);
     });
   }
@@ -57,7 +55,7 @@ export class ChatComponent implements OnInit {
     this.currentContacts = this[func](this.selfInfo[name]) || [];
   }
 
-  private adapteRecentContacts(recentContacts: any[]) {
+  private adapteRecentContacts(recentContacts: any[]): ContactsItem[] {
     const id: string = this.selfInfo._id || '';
 
     return recentContacts.map((contact) => {
@@ -118,8 +116,38 @@ export class ChatComponent implements OnInit {
 
   // 处理单聊接收消息
   private handleSignalChat(data) {
-    // ... 
     console.log('接收到消息：', data);
+    const fullMessage = this.adapteSignalMessage(data);
+
+    // 更新消息中心
+    if (typeof this.chatChannelCenter[data.message_channel] !== 'undefined') {
+      this.chatChannelCenter[data.message_channel].push(fullMessage);
+    } else {
+      this.chatChannelCenter[data.message_channel] = [fullMessage];
+    }
+    // 更新当前消息列表 ... 这里遗留问题
+    this.currentMessages = this.chatChannelCenter[data.message_channel];
+  }
+
+  private adapteSignalMessage(data: any): ChatFullMessage {
+    const fullMessage: ChatFullMessage = {
+      type: data.message_type,
+      time: utils.formatTime(data.created_at),
+      content: data.message_content,
+      source: {
+        nickname: data.message_source.nickname,
+        id: data.message_source._id,
+        avator: data.message_source.avator,
+        information: data.message_source.extra,
+      },
+      target: {
+        nickname: data.message_target.nickname,
+        id: data.message_target._id,
+        avator: data.message_target.avator,
+        information: data.message_target.extra,
+      },
+    };
+    return fullMessage;
   }
 
   // 处理通知消息

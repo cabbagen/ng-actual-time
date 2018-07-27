@@ -5,6 +5,9 @@
   </div>
 
   <div class="chat-room-content" id="chat-room-content">
+    <div *ngIf="currentContact.nickname !== ''" class="chat-room-top">
+      <a>加载历史消息</a>
+    </div>
     <div
       *ngFor="let messageInfo of currentMessages"
       [class.chat-message-left]="!isMySelf(messageInfo)"

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, DoCheck } from '@angular/core';
 import { ContactsItem } from '../interfaces/chat-contact.interface';
 import { ChatFullMessage } from '../interfaces/chat-message.interface';
+import { ChatService } from '../services/chat.service';
 import { formatTime } from '../../utils/utils';
 
 @Component({
@@ -16,7 +17,7 @@ export class ChatRoomComponent implements OnInit, DoCheck {
 
   @Input() selfInfo: any;
 
-  constructor() { }
+  constructor(private chatService: ChatService) { }
 
   ngOnInit() {
   }

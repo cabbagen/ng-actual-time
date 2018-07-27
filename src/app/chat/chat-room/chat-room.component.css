@@ -5,6 +5,10 @@
   border-bottom: 1px solid #eeeeee;
   text-align: center
 }
+.chat-room-top {
+  margin: 10px 0px;
+  text-align: center;
+}
 .chat-room-panel .chat-room-content {
   height: 370px;
   overflow-y: scroll;

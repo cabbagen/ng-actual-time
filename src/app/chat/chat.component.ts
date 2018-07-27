@@ -125,8 +125,13 @@ export class ChatComponent implements OnInit {
     } else {
       this.chatChannelCenter[data.message_channel] = [fullMessage];
     }
-    // 更新当前消息列表 ... 这里遗留问题
-    this.currentMessages = this.chatChannelCenter[data.message_channel];
+
+    if (this.currentContact.id === fullMessage.target.id) {
+      this.currentMessages = this.chatChannelCenter[data.message_channel];
+    } else {
+      // - todo 并非为当前联系人，人员列表中要显示消息提醒标示。
+    }
+    
   }
 
   private adapteSignalMessage(data: any): ChatFullMessage {
@@ -171,7 +176,18 @@ export class ChatComponent implements OnInit {
 
     this.currentContact = contact;
     this.currentMessages = this.chatChannelCenter[contact.id] || [];
+    this.updateCurrentMessages(createChannelInfo.sourceId, createChannelInfo.targetId);
     this.chatService.createIMChannel(createChannelInfo);
+  }
+
+  // 当切换联系人的时候，加载之前的聊天记录
+  private updateCurrentMessages(sourceId, targetId: string) {
+    const channelIds: string[] = [`${sourceId}@@${targetId}`, `${targetId}@@${sourceId}`];
+    for (const prop in this.chatChannelCenter) {
+      if (channelIds.indexOf(prop) > -1) {
+        this.currentMessages = this.chatChannelCenter[prop];
+      }
+    }
   }
 
   // 发送 IM 消息

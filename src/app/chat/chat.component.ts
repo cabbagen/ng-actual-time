@@ -14,20 +14,28 @@ import * as utils from '../utils/utils';
 })
 export class ChatComponent implements OnInit {
 
-  private tabIndexMap: { [key: number]: { name: string, func: string } } = {
-    0: { name: 'recentContacts', func: 'adapteRecentContacts' },
-    1: { name: 'friends', func: 'adapteFriends' },
-    2: { name: 'groups', func: 'adapteGroups' },
-  };
+  // 处理当前聊天面板人员适配
+  private tabIndexText: string[] = ['recentContacts', 'friends', 'groups'];
 
+  // 应用 appkey
   private appkey: any = utils.getQuery().appkey;
 
+  // 当前 IM 用户信息
   public selfInfo: any = {};
 
+  // 最近联系人列表
+  private recentContacts: ContactsItem[] = [];
+
+  // 好友列表
+  private friends: ContactsItem[] = [];
+
+  // 群组列表
+  private groups: ContactsItem[] = [];
+
+  // 当前联系人面板人员
   public currentContacts: ContactsItem[] = [];
 
-  public currentTab: number = 0;
-
+  // 当前的联系人
   public currentContact: ContactsItem = {
     id: '',
     avator: '',
@@ -35,24 +43,37 @@ export class ChatComponent implements OnInit {
     information: '',
   };
 
-  public currentMessages: ChatFullMessage[] = [];
+  // 当前面板 tab
+  public currentTab: number = 0;
 
+  // IM 用户的聊天通道中心，这里保存了当前的全部聊天记录
   private chatChannelCenter: Channel = {};
+
+  // 当前的消息队列
+  public currentMessages: ChatFullMessage[] = [];
 
   constructor(private chatService: ChatService, private nzModalService: NzModalService) {
   }
 
   public ngOnInit() {
     this.chatService.loginApplication().subscribe((result) => {
-      this.selfInfo = result.data;
+      this.initAppInfo(result);
       this.chatService.socketConnect(this.registeChatSocketEventListener.bind(this));
       this.updateCurrentContacts(this.currentTab);
     });
   }
 
+  private initAppInfo(response) {
+    const { data } = response;
+
+    this.selfInfo = data;
+    this.recentContacts = this.adapteRecentContacts(data.recentContacts) || [];
+    this.friends = this.adapteFriends(data.friends) || [];
+    this.groups = this.adapteGroups(data.groups) || [];
+  }
+
   private updateCurrentContacts(tabIndex: number): void {
-    const { name, func } = this.tabIndexMap[tabIndex];
-    this.currentContacts = this[func](this.selfInfo[name]) || [];
+    this.currentContacts = this[ this.tabIndexText[tabIndex] ];
   }
 
   private adapteRecentContacts(recentContacts: any[]): ContactsItem[] {
@@ -109,9 +130,19 @@ export class ChatComponent implements OnInit {
   }
 
   // 处理创建聊天通道
-  private handleCreateChannel(data) {
-    // ... 这里不需要处理
-    console.log('创建通道响应: ', data);
+  // 创建聊天通道之后，会将之前未读的聊天记录反馈回来
+  private handleCreateChannel(result) {
+    const adaptedData: ChatFullMessage[] = result.data.map(messageInfo => {
+      return this.adapteSignalMessage(messageInfo);
+    });
+
+    if (typeof this.chatChannelCenter[result.channelId] !== 'undefined') {
+      this.chatChannelCenter[result.channelId].unshift(...adaptedData);
+    } else {
+      this.chatChannelCenter[result.channelId] = adaptedData;
+    }
+    
+    this.currentMessages = this.chatChannelCenter[result.channelId];
   }
 
   // 处理单聊接收消息
@@ -126,12 +157,30 @@ export class ChatComponent implements OnInit {
       this.chatChannelCenter[data.message_channel] = [fullMessage];
     }
 
+    // 如果对方为当前的聊天对象，这时候会更新聊天信息队列
+    // 如果对方不是当前的聊天对象，这时候需要给响应的人员添加未读消息提示
     if (this.currentContact.id === fullMessage.target.id) {
       this.currentMessages = this.chatChannelCenter[data.message_channel];
     } else {
-      // - todo 并非为当前联系人，人员列表中要显示消息提醒标示。
+      // 并非为当前联系人，人员列表中要显示消息提醒标示。
+      this.updateRecentContacts(fullMessage.target.id);
     }
-    
+  }
+
+  // 聊天对象未读消息 +1
+  private updateRecentContacts(id) {
+    const updatedRecentContacts = this.recentContacts.map((contact) => {
+      if (contact.id !== id) {
+        return contact;
+      }
+      if (contact.unReadMessages) {
+        contact.unReadMessages += 1;
+      } else {
+        contact.unReadMessages = 1;
+      }
+      return contact;
+    });
+    this.recentContacts = updatedRecentContacts;
   }
 
   private adapteSignalMessage(data: any): ChatFullMessage {
@@ -165,8 +214,16 @@ export class ChatComponent implements OnInit {
     this.updateCurrentContacts(currentTab);
   }
 
-  // 选择联系人，创建聊天通道
+  // 选择联系人
+  // 创建聊天通道 - 切换当前聊天对象 - 加载对应的聊天记录
   public selectContact(contact: ContactsItem): void {
+    // 当选择聊天人之后，取消未读消息提示
+    if (contact.unReadMessages && contact.unReadMessages > 0) {
+      contact.unReadMessages = 0;
+    }
+
+    this.currentContact = contact;
+
     const createChannelInfo: { [key: string]: string } = {
       sourceId: this.selfInfo._id,
       targetId: contact.id,
@@ -174,15 +231,16 @@ export class ChatComponent implements OnInit {
       channelType: this.currentTab.toString(),
     };
 
-    this.currentContact = contact;
-    this.currentMessages = this.chatChannelCenter[contact.id] || [];
-    this.updateCurrentMessages(createChannelInfo.sourceId, createChannelInfo.targetId);
     this.chatService.createIMChannel(createChannelInfo);
+    this.updateCurrentMessages(createChannelInfo.sourceId, createChannelInfo.targetId);
   }
 
   // 当切换联系人的时候，加载之前的聊天记录
   private updateCurrentMessages(sourceId, targetId: string) {
     const channelIds: string[] = [`${sourceId}@@${targetId}`, `${targetId}@@${sourceId}`];
+
+    this.currentMessages = [];
+
     for (const prop in this.chatChannelCenter) {
       if (channelIds.indexOf(prop) > -1) {
         this.currentMessages = this.chatChannelCenter[prop];

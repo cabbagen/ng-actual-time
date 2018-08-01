@@ -1,13 +1,18 @@
 <div class="chat-contacts-panel">
   <div class="chat-self">
-      <nz-avatar
-        [nzShape]="'square'"
-        [nzSize]="'large'"
-        [nzIcon]="'user'"
-        [nzSrc]="selfInfo.avator"
-      >
-      </nz-avatar>
-      <span>{{selfInfo.nickname}}</span>
+      <div class="chat-self-info">
+        <nz-avatar
+          [nzShape]="'square'"
+          [nzSize]="'large'"
+          [nzIcon]="'user'"
+          [nzSrc]="selfInfo.avator"
+        >
+        </nz-avatar>
+        <span>{{selfInfo.nickname}}</span>
+      </div>
+      <div class="chat-self-menu">
+          <i class="anticon anticon-menu-fold"></i>
+      </div>
   </div>
   <div class="chat-search">
     <nz-input [nzType]="'text'" [nzPlaceHolder]="'查询'" [nzSize]="'large'">

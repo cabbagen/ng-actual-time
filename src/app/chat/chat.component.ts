@@ -1,5 +1,5 @@
-import { Component, OnInit, group } from '@angular/core';
-import { NzModalService } from 'ng-zorro-antd';
+import { Component, OnInit } from '@angular/core';
+import { NzModalService, NzNotificationService } from 'ng-zorro-antd';
 import { ChatService } from './services/chat.service';
 import { ContactsItem } from './interfaces/chat-contact.interface';
 import { Channel } from './interfaces/chat-channel.interface';
@@ -52,7 +52,7 @@ export class ChatComponent implements OnInit {
   // 当前的消息队列
   public currentMessages: ChatFullMessage[] = [];
 
-  constructor(private chatService: ChatService, private nzModalService: NzModalService) {
+  constructor(private chatService: ChatService, private nzModalService: NzModalService, private nzNotificationService: NzNotificationService) {
   }
 
   public ngOnInit() {
@@ -164,11 +164,13 @@ export class ChatComponent implements OnInit {
     } else {
       // 并非为当前联系人，人员列表中要显示消息提醒标示。
       this.updateRecentContacts(fullMessage.target.id);
+      // 创建 notification 提醒
+      this.createNotification(`接收到来自${fullMessage.source.nickname}的消息`);
     }
   }
 
   // 聊天对象未读消息 +1
-  private updateRecentContacts(id) {
+  private updateRecentContacts(id): void {
     const updatedRecentContacts = this.recentContacts.map((contact) => {
       if (contact.id !== id) {
         return contact;
@@ -181,6 +183,10 @@ export class ChatComponent implements OnInit {
       return contact;
     });
     this.recentContacts = updatedRecentContacts;
+  }
+
+  private createNotification(content: string): void {
+    this.nzNotificationService.info('消息提醒', content);
   }
 
   private adapteSignalMessage(data: any): ChatFullMessage {

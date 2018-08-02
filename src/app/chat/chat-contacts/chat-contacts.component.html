@@ -10,9 +10,15 @@
         </nz-avatar>
         <span>{{selfInfo.nickname}}</span>
       </div>
-      <div class="chat-self-menu">
-          <i class="anticon anticon-menu-fold"></i>
+      <div class="chat-self-menu" (click)="triggerMenu()">
+        <i class="anticon anticon-menu-fold"></i>
       </div>
+      <ul class="chat-self-menu-content" *ngIf="isShowMenu">
+        <li *ngFor="let iconInfo of iconInfos">
+          <i class="{{'anticon ' + iconInfo.icon}}"></i>
+          <span>{{iconInfo.content}}</span>
+        </li>
+      </ul>
   </div>
   <div class="chat-search">
     <nz-input [nzType]="'text'" [nzPlaceHolder]="'查询'" [nzSize]="'large'">

@@ -18,9 +18,21 @@ export class ChatContactsComponent implements OnInit {
 
   @Output() onSelectContact = new EventEmitter<ContactsItem>();
 
+  public iconInfos: {icon: string, content: string}[] = [
+    { icon: 'anticon-edit', content: '修改信息' },
+    { icon: 'anticon-user-add', content: '添加好友' },
+    { icon: 'anticon-usergroup-add', content: '添加群组' },
+  ];
+
+  public isShowMenu: boolean = false;
+
   constructor() { }
 
   public ngOnInit() {
+  }
+
+  public triggerMenu() {
+    this.isShowMenu = !this.isShowMenu;
   }
 
   public changeChatTab(currentTab: number) {

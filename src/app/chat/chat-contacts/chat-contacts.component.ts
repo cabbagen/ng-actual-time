@@ -18,29 +18,45 @@ export class ChatContactsComponent implements OnInit {
 
   @Output() onSelectContact = new EventEmitter<ContactsItem>();
 
-  public iconInfos: {icon: string, content: string}[] = [
-    { icon: 'anticon-edit', content: '修改信息' },
-    { icon: 'anticon-user-add', content: '添加好友' },
-    { icon: 'anticon-usergroup-add', content: '添加群组' },
+  public iconInfos: {icon: string, content: string, type: string}[] = [
+    { icon: 'anticon-edit', content: '修改信息', type: 'modifyInfo' },
+    { icon: 'anticon-user-add', content: '添加好友', type: 'addFriends' },
+    { icon: 'anticon-usergroup-add', content: '添加群组', type: 'addGroup' },
   ];
 
   public isShowMenu: boolean = false;
+
+  public modalInfo: {title: string, type: string, isVisible: boolean} = null;
 
   constructor() { }
 
   public ngOnInit() {
   }
 
-  public triggerMenu() {
+  public triggerMenu(): void {
     this.isShowMenu = !this.isShowMenu;
   }
 
-  public changeChatTab(currentTab: number) {
+  public showModal(title: string, type: string): void {
+    console.log('type: ', type);
+    this.modalInfo = {title, type, isVisible: true};
+  }
+
+  public changeChatTab(currentTab: number): void {
     this.onChangeChatTab.emit(currentTab);
   }
 
-  public selectContact(contact: ContactsItem) {
+  public selectContact(contact: ContactsItem): void {
     this.onSelectContact.emit(contact);
+  }
+
+  public handleOkModal(type: string, data: any): void {
+    console.log('修改用户信息保存', type, data);
+    this.modalInfo = null
+  }
+
+  public handleCancelModal(): void {
+    this.modalInfo = null;
   }
 
 }

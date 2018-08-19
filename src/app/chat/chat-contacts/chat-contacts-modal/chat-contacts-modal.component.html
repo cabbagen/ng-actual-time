@@ -1,0 +1,32 @@
+
+<nz-modal
+  [(nzVisible)]="isShowModal"
+  [nzTitle]="modalTitle"
+  [nzContent]="currentModalTpl"
+  (nzOnCancel)="handleCancelModal()"
+  (nzOnOk)="handleOkModal()"
+>
+</nz-modal>
+
+<ng-template #modifyInfo>
+  <div class="row">
+    <div class="field">用户昵称</div>
+    <input
+      nz-input
+      placeholder="请输入用户昵称"
+      [(ngModel)]="value"
+    />
+  </div>
+  <div class="row">
+    <div class="field">用户头像</div>
+    <div>用户头像</div>
+  </div>
+</ng-template>
+
+<ng-template #addFriends>
+  <p>this is addFriends</p>
+</ng-template>
+
+<ng-template #addGroup>
+  <p>this is addGroup</p>
+</ng-template>

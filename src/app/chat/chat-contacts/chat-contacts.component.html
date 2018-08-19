@@ -10,7 +10,7 @@
         </nz-avatar>
         <span>{{selfInfo.nickname}}</span>
       </div>
-      <div class="chat-self-menu" (click)="triggerMenu()">
+      <div class="chat-self-menu" (click)="triggerMenu($event)">
         <i class="anticon anticon-menu-fold"></i>
       </div>
       <ul class="chat-self-menu-content" *ngIf="isShowMenu">
@@ -43,13 +43,12 @@
     (selectContact)="selectContact($event)"
   >
   </app-chat-contacts-item>
-  <app-chat-contacts-modify-modal
-    *ngIf="modalInfo && modalInfo.type === 'modifyInfo'"
-    [type]="modalInfo && modalInfo.type"
-    [title]="modalInfo && modalInfo.title"
-    [isVisible]="modalInfo && modalInfo.isVisible"
-    (handleOkModifyModal)="handleOkModal($event)"
-    (handleCancelModifyModal)="handleCancelModal($event)"
+  <app-chat-contacts-modal
+    [isShowModal]="modalInfo.isVisible"
+    [modalTitle]="modalInfo.title"
+    [modalType]="modalInfo.type"
+    (onCancelModal)="handleCancelModal($event)"
+    (onOkModal)="handleOkModal($event)"
   >
-  </app-chat-contacts-modify-modal>
+  </app-chat-contacts-modal>
 </div>

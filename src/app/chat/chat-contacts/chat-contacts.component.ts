@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, EventEmitter, Output } from '@angular/core';
 import { ContactsItem } from '../interfaces/chat-contact.interface';
 
 @Component({
@@ -6,7 +6,7 @@ import { ContactsItem } from '../interfaces/chat-contact.interface';
   templateUrl: './chat-contacts.component.html',
   styleUrls: ['./chat-contacts.component.css']
 })
-export class ChatContactsComponent implements OnInit {
+export class ChatContactsComponent implements OnInit, AfterViewInit {
 
   @Input() selfInfo;
 
@@ -26,15 +26,26 @@ export class ChatContactsComponent implements OnInit {
 
   public isShowMenu: boolean = false;
 
-  public modalInfo: {title: string, type: string, isVisible: boolean} = null;
+  public modalInfo: {title: string, type: string, isVisible: boolean} = {
+    title: '',
+    type: '',
+    isVisible: false,
+  };
 
   constructor() { }
 
   public ngOnInit() {
   }
 
-  public triggerMenu(): void {
-    this.isShowMenu = !this.isShowMenu;
+  public ngAfterViewInit() {
+    document.body.addEventListener('click', () => {
+      this.isShowMenu = false;
+    }, false);
+  }
+
+  public triggerMenu($event): void {
+    $event.stopPropagation();
+    this.isShowMenu = true;
   }
 
   public showModal(title: string, type: string): void {
@@ -52,11 +63,11 @@ export class ChatContactsComponent implements OnInit {
 
   public handleOkModal(type: string, data: any): void {
     console.log('修改用户信息保存', type, data);
-    this.modalInfo = null
+    this.modalInfo = { title: '', type: '', isVisible: false };
   }
 
   public handleCancelModal(): void {
-    this.modalInfo = null;
+    this.modalInfo = { title: '', type: '', isVisible: false };
   }
 
 }

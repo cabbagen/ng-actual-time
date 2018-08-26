@@ -28,6 +28,24 @@ export class ChatContactsModalComponent implements OnInit, DoCheck {
 
   public currentModalTpl: TemplateRef<any> | string = '';
 
+  // 修改信息保存信息
+  public stateForModifyInfo: { nickname: string, avator: string } = {
+    nickname: '',
+    avator: '',
+  };
+
+  // 添加好友保存信息
+  public stateForAddFriends: { username: string, userId: number } = {
+    username: '',
+    userId: 0,
+  };
+
+  // 添加群组保存信息
+  public stateForAddGroup: { groupName: string, groupId: number } = {
+    groupName: '',
+    groupId: 0
+  };
+
   constructor() { }
 
   ngOnInit() {
@@ -42,6 +60,11 @@ export class ChatContactsModalComponent implements OnInit, DoCheck {
   }
 
   public handleOkModal(): void {
-    this.onOkModal.emit('qweqwe');
+    const modalState = this['stateFor' + this.modalType.replace(/^\w{1}/, $1 => $1.toUpperCase())];
+    this.onOkModal.emit({ type: this.modalType, params: modalState });
+  }
+
+  public uploadImgSuccess(img: string) {
+    this.stateForModifyInfo.avator = img;
   }
 }

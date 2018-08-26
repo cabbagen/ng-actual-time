@@ -14,12 +14,16 @@
     <input
       nz-input
       placeholder="请输入用户昵称"
-      [(ngModel)]="value"
+      [(ngModel)]="stateForModifyInfo.nickname"
     />
   </div>
   <div class="row">
     <div class="field">用户头像</div>
-    <div>用户头像</div>
+    <app-upload-input
+      class="upload-input"
+      (uploadImgSuccess)="uploadImgSuccess($event)"
+    >
+    </app-upload-input>
   </div>
 </ng-template>
 

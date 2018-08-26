@@ -49,7 +49,6 @@ export class ChatContactsComponent implements OnInit, AfterViewInit {
   }
 
   public showModal(title: string, type: string): void {
-    console.log('type: ', type);
     this.modalInfo = {title, type, isVisible: true};
   }
 
@@ -61,8 +60,8 @@ export class ChatContactsComponent implements OnInit, AfterViewInit {
     this.onSelectContact.emit(contact);
   }
 
-  public handleOkModal(type: string, data: any): void {
-    console.log('修改用户信息保存', type, data);
+  public handleOkModal(data): void {
+    console.log('修改用户信息保存', data);
     this.modalInfo = { title: '', type: '', isVisible: false };
   }
 

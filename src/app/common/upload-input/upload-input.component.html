@@ -1,0 +1,16 @@
+<!-- 文件上传 Input -->
+<ng-container>
+  <nz-input [(ngModel)]="inputValue" nzPlaceHolder="请上传图片" [nzDisabled]="true">
+    <ng-template #addOnBefore>
+      <nz-upload
+        [nzName]="uploadImgField"
+        [nzShowUploadList]="false"
+        [nzAction]="uploadImgURL"
+        (nzChange)="handleUploadImg($event)"
+      >
+        <i class="anticon anticon-cloud-upload-o"></i>
+      </nz-upload>
+    </ng-template>
+  </nz-input>
+</ng-container>
+  

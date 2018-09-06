@@ -4,7 +4,7 @@
 import * as moment from 'moment';
 import * as querystring from 'querystring';
 
-export function getQuery() {
+export function getQuery(): any {
   return querystring.parse(window.location.search.slice(1));
 }
 
@@ -18,4 +18,9 @@ export function serialize(object: any): string {
     serializes.push(`${prop}=${object[prop]}`);
   }
   return serializes.join('&');
+}
+
+export function getAuthInfo(): { id: string, appkey: string } {
+  const { appkey = '', id = '' } = getQuery();
+  return { appkey, id };
 }

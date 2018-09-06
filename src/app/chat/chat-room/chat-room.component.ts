@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, DoCheck } from '@angular/core';
 import { ContactsItem } from '../interfaces/chat-contact.interface';
 import { ChatFullMessage } from '../interfaces/chat-message.interface';
-import { ChatService } from '../services/chat.service';
 import { formatTime } from '../../utils/utils';
 
 @Component({
@@ -17,7 +16,7 @@ export class ChatRoomComponent implements OnInit, DoCheck {
 
   @Input() selfInfo: any;
 
-  constructor(private chatService: ChatService) { }
+  constructor() { }
 
   ngOnInit() {
   }
@@ -28,10 +27,10 @@ export class ChatRoomComponent implements OnInit, DoCheck {
 
   handleChatRoomScrollToBottom(): void {
     const element: Element = document.getElementById('chat-room-content');
-    const needDistanceToBottom: number = element.scrollHeight - element.clientHeight;
+    const neededDistanceToBottom: number = element.scrollHeight - element.clientHeight;
 
-    if (needDistanceToBottom > 0) {
-      element.scrollTop = needDistanceToBottom;
+    if (neededDistanceToBottom > 0) {
+      element.scrollTop = neededDistanceToBottom;
     }
   }
 

@@ -1,16 +1,22 @@
-
+<!--
+  该 modal 供  **修改 IM 用户信息**、**添加 IM用户**、**添加群组** 公用
+  nz-modal 为 公用的 modal 容器
+-->
 <nz-modal
   [(nzVisible)]="isShowModal"
   [nzTitle]="modalTitle"
+  [nzWidth]="'700px'"
   [nzContent]="currentModalTpl"
   (nzOnCancel)="handleCancelModal()"
   (nzOnOk)="handleOkModal()"
 >
 </nz-modal>
 
+
+<!-- 修改 IM 用户信息  #template -->
 <ng-template #modifyInfo>
   <div class="row">
-    <div class="field">用户昵称</div>
+    <div class="field">我的昵称</div>
     <input
       nz-input
       placeholder="请输入用户昵称"
@@ -18,7 +24,7 @@
     />
   </div>
   <div class="row">
-    <div class="field">用户头像</div>
+    <div class="field">我的头像</div>
     <app-upload-input
       class="upload-input"
       (uploadImgSuccess)="uploadImgSuccess($event)"
@@ -27,10 +33,82 @@
   </div>
 </ng-template>
 
+
+<!-- 添加 IM 用户  #template -->
 <ng-template #addFriends>
-  <p>this is addFriends</p>
+  <div class="add-friends-wrap">
+    <div class="modal-content-header">
+      <nz-input-group nzCompact>
+        <nz-select [ngModel]="'Zhejiang'">
+          <nz-option [nzLabel]="'Zhejiang'" [nzValue]="'Zhejiang'"></nz-option>
+          <nz-option [nzLabel]="'Jiangsu'" [nzValue]="'Jiangsu'"></nz-option>
+        </nz-select>
+        <input [ngModel]="'Xihu District, Hangzhou'" style="width: 50%;" nz-input>
+        <button nz-button [nzType]="'primary'">
+          <span>查询</span>
+        </button>
+      </nz-input-group>
+    </div>
+    <div class="modal-content-body">
+      <div class="modal-content-item">
+        <div class="modal-content-item-left">
+          <div class="modal-content-item-avator">
+            <img src="http://localhost:4000/static/images/psWRWRQb.jpg" alt="pic" />
+          </div>
+          <div class="modal-content-item-description">
+            <p>苏小夏</p>
+            <p>苏小夏是一个很懒的人!!</p>
+          </div>
+        </div>
+        <div class="modal-content-item-right">
+          <div>申请添加</div>
+        </div>
+      </div>
+      <div class="modal-content-item">
+        <div class="modal-content-item-left">
+          <div class="modal-content-item-avator">
+            <img src="http://localhost:4000/static/images/psWRWRQb.jpg" alt="pic" />
+          </div>
+          <div class="modal-content-item-description">
+            <p>苏小夏</p>
+            <p>苏小夏是一个很懒的人!!</p>
+          </div>
+        </div>
+        <div class="modal-content-item-right">
+          <div>申请添加</div>
+        </div>
+      </div>
+      <div class="modal-content-item">
+        <div class="modal-content-item-left">
+          <div class="modal-content-item-avator">
+            <img src="http://localhost:4000/static/images/psWRWRQb.jpg" alt="pic" />
+          </div>
+          <div class="modal-content-item-description">
+            <p>苏小夏</p>
+            <p>苏小夏是一个很懒的人!!</p>
+          </div>
+        </div>
+        <div class="modal-content-item-right">
+          <div>申请添加</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-content-footer">
+      <nz-pagination
+        [(nzPageIndex)]="_current"
+        [nzTotal]="50"
+        [nzSize]="'small'"
+        nzShowTotal
+        nzShowSizeChanger
+        nzShowQuickJumper
+      >
+      </nz-pagination>
+    </div>
+  </div>
 </ng-template>
 
+
+<!-- 添加群组信息  #template -->
 <ng-template #addGroup>
   <p>this is addGroup</p>
 </ng-template>

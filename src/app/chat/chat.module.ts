@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { ChatComponent } from './chat.component';
-import { ChatService } from './services/chat.service';
+import { ChatSocketService } from './services/chat.socket.service';
+import { ChatHttpService } from './services/chat.http.service';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { ChatContactsComponent } from './chat-contacts/chat-contacts.component';
@@ -27,7 +28,7 @@ import { UploadInputComponent } from '../common/upload-input/upload-input.compon
     FormsModule,
     NgZorroAntdModule,
   ],
-  providers: [ ChatService, NzModalService, NzMessageService ],
+  providers: [ ChatSocketService, ChatHttpService, NzModalService, NzMessageService ],
   bootstrap: [],
 })
 export class ChatModule { }

@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
-import { domain, chatSocketURL } from '../../config';
+import { chatSocketURL } from '../../config';
 import { ChatMessage } from '../interfaces/chat-message.interface';
 import { EventRegiste } from '../interfaces/chat.event.interface';
 import { EventCenter } from './chat.event';
@@ -11,30 +8,11 @@ import * as utils from '../../utils/utils';
 declare const window;
 
 @Injectable()
-export class ChatService {
+export class ChatSocketService {
 
   private chatSocket = null;
 
-  constructor(private http: HttpClient) {
-  }
-
-  public loginApplication() {
-    const { appkey, id } = utils.getQuery();
-    
-    if (!appkey || !id) throw new Error('获取 IM 用户信息 请求参数 错误');
-
-    return this.http.get(`${domain}/getContactInfo?${utils.serialize({appkey, id})}`)
-      .pipe(retry(3),catchError(this.handleError));
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    if (error.error instanceof ErrorEvent) {
-      console.log('An error occurred: ', error.error.message);
-    } else {
-      console.error( `Backend returned code ${error.status}, body was: ${error.error}`);
-    }
-
-    return Observable.throw('Something bad happened; please try again later.');
+  constructor() {
   }
 
   public socketConnect(callback: Function) {

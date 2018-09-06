@@ -10,3 +10,55 @@
 .upload-input {
   width: 100%;
 }
+
+.modal-content-header {
+  margin-bottom: 10px;
+}
+.modal-content-item {
+  display: flex;
+  padding: 10px 0px;
+  justify-content: space-between;
+  border-bottom: 1px dashed #eeeeee;
+}
+.modal-content-item-left {
+  display: flex;
+}
+.modal-content-item-avator {
+  width: 60px;
+  height: 60px;
+}
+.modal-content-item-avator img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.modal-content-item-description {
+  margin-left: 10px;
+}
+.modal-content-item-description p {
+  line-height: 170%;
+}
+.modal-content-item-right {
+  position: relative;
+  top: 0px;
+  left: 0px;
+}
+.modal-content-item-right div {
+  width: 80px;
+  text-align: center;
+  height: 30px;
+  line-height: 30px;
+  background-color: #23ea7c;
+  color: #ffffff;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.modal-content-item-right div:hover {
+  background-color: #12da6b;
+}
+.modal-content-footer {
+  margin-top: 20px;
+}

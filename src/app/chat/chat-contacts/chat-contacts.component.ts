@@ -1,4 +1,6 @@
 import { Component, OnInit, AfterViewInit, Input, EventEmitter, Output } from '@angular/core';
+import { NzMessageService } from 'ng-zorro-antd';
+import { ChatHttpService } from '../services/chat.http.service';
 import { ContactsItem } from '../interfaces/chat-contact.interface';
 
 @Component({
@@ -32,7 +34,7 @@ export class ChatContactsComponent implements OnInit, AfterViewInit {
     isVisible: false,
   };
 
-  constructor() { }
+  constructor(private chatHttpService: ChatHttpService, private messageService: NzMessageService) { }
 
   public ngOnInit() {
   }
@@ -62,6 +64,17 @@ export class ChatContactsComponent implements OnInit, AfterViewInit {
 
   public handleOkModal(data): void {
     console.log('修改用户信息保存', data);
+    const handleFuncMap = {
+      modifyInfo: this.chatHttpService.saveContactInfo.bind(this.chatHttpService),
+    };
+    handleFuncMap[data.type](data.params).subscribe((result) => {
+      if (result.state !== 200) {
+        this.messageService.error(result.msg);
+      } else {
+        // window.location.reload();
+      }
+      console.log('------->', result);
+    });
     this.modalInfo = { title: '', type: '', isVisible: false };
   }
 

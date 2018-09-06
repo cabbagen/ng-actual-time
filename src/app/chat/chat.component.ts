@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NzModalService, NzNotificationService } from 'ng-zorro-antd';
-import { ChatService } from './services/chat.service';
+import { ChatHttpService } from './services/chat.http.service';
+import { ChatSocketService } from './services/chat.socket.service';
 import { ContactsItem } from './interfaces/chat-contact.interface';
 import { Channel } from './interfaces/chat-channel.interface';
 import { ChatMessage, ChatFullMessage } from './interfaces/chat-message.interface';
@@ -18,7 +19,7 @@ export class ChatComponent implements OnInit {
   private tabIndexText: string[] = ['recentContacts', 'friends', 'groups'];
 
   // 应用 appkey
-  private appkey: any = utils.getQuery().appkey;
+  private appkey: any = utils.getAuthInfo().appkey;
 
   // 当前 IM 用户信息
   public selfInfo: any = {};
@@ -52,13 +53,17 @@ export class ChatComponent implements OnInit {
   // 当前的消息队列
   public currentMessages: ChatFullMessage[] = [];
 
-  constructor(private chatService: ChatService, private nzModalService: NzModalService, private nzNotificationService: NzNotificationService) {
-  }
+  constructor(
+    private chatHttpService: ChatHttpService,
+    private chatSocketService: ChatSocketService,
+    private nzModalService: NzModalService,
+    private nzNotificationService: NzNotificationService
+  ) {}
 
   public ngOnInit() {
-    this.chatService.loginApplication().subscribe((result) => {
+    this.chatHttpService.loginApplication().subscribe((result) => {
       this.initAppInfo(result);
-      this.chatService.socketConnect(this.registeChatSocketEventListener.bind(this));
+      this.chatSocketService.socketConnect(this.registeChatSocketEventListener.bind(this));
       this.updateCurrentContacts(this.currentTab);
     });
   }
@@ -126,7 +131,7 @@ export class ChatComponent implements OnInit {
       { eventName: EventCenter.im_signal_chat, responseCallBack: this.handleSignalChat.bind(this) },
       { eventName: EventCenter.im_notice, responseCallBack: this.handleNotice.bind(this) },
     ];
-    this.chatService.registeEventListener(events);
+    this.chatSocketService.registeEventListener(events);
   }
 
   // 处理创建聊天通道
@@ -237,7 +242,7 @@ export class ChatComponent implements OnInit {
       channelType: this.currentTab.toString(),
     };
 
-    this.chatService.createIMChannel(createChannelInfo);
+    this.chatSocketService.createIMChannel(createChannelInfo);
     this.updateCurrentMessages(createChannelInfo.sourceId, createChannelInfo.targetId);
   }
 
@@ -269,6 +274,6 @@ export class ChatComponent implements OnInit {
       appkey: this.appkey,
     };
 
-    this.chatService.sendSignalMessage(msgItem);
+    this.chatSocketService.sendSignalMessage(msgItem);
   }
 }

@@ -60,8 +60,27 @@ export class ChatContactsModalComponent implements OnInit, DoCheck {
   }
 
   public handleOkModal(): void {
-    const modalState = this['stateFor' + this.modalType.replace(/^\w{1}/, $1 => $1.toUpperCase())];
-    this.onOkModal.emit({ type: this.modalType, params: modalState });
+    const modalInfoMap: { [key: string]: { state: any, reset: Function }  } = {
+      modifyInfo: { state: this.stateForModifyInfo, reset: this.resetStateForModifyInfo.bind(this) },
+      addFriends: { state: this.stateForAddFriends, reset: this.resetStateForAddFriends.bind(this) },
+      addGroup: { state: this.stateForAddGroup, reset: this.resetStateForAddGroup.bind(this) },
+    };
+  
+    this.onOkModal.emit({ type: this.modalType, params: modalInfoMap[this.modalType].state });
+
+    modalInfoMap[this.modalType].reset();
+  }
+
+  private resetStateForModifyInfo() {
+    this.stateForModifyInfo = { nickname: '', avator: '' };
+  }
+
+  private resetStateForAddFriends() {
+    this.stateForAddFriends = { username: '', userId: 0 };
+  }
+
+  private resetStateForAddGroup() {
+    this.stateForAddGroup = { groupName: '', groupId: 0 };
   }
 
   public uploadImgSuccess(img: string) {

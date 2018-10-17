@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { catchError, retry, throttle } from 'rxjs/operators';
 import { domain } from '../../config';
 import * as utils from '../../utils/utils';
 
@@ -45,6 +45,20 @@ export class ChatHttpService {
     const params =  Object.assign({}, contactInfo, { appkey, id });
 
     return this.http.post(`${domain}/saveContactInfo`, params)
+      .pipe(retry(3), catchError(this.handleError));
+  }
+
+  // 获取联系人信息
+  public getContactInfos(searchInfo: { type: string, pageIndex: number, pageSize: number, search: string }) {
+    const { appkey } = utils.getAuthInfo();
+
+    if (!appkey) {
+      throw new Error(this.authErrorMsg);
+    }
+
+    const params = Object.assign({}, searchInfo, { appkey });
+
+    return this.http.post(`${domain}/getContactInfos`, params)
       .pipe(retry(3), catchError(this.handleError));
   }
 }

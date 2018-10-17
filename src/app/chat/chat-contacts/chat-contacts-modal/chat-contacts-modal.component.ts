@@ -1,4 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, TemplateRef, DoCheck } from '@angular/core';
+import { ChatHttpService } from '../../services/chat.http.service'; 
+
+let requestFlag = false;
 
 @Component({
   selector: 'app-chat-contacts-modal',
@@ -28,31 +31,47 @@ export class ChatContactsModalComponent implements OnInit, DoCheck {
 
   public currentModalTpl: TemplateRef<any> | string = '';
 
-  // 修改信息保存信息
+  // 修改个人信息 state
   public stateForModifyInfo: { nickname: string, avator: string } = {
     nickname: '',
     avator: '',
   };
 
-  // 添加好友保存信息
-  public stateForAddFriends: { username: string, userId: number } = {
-    username: '',
-    userId: 0,
+  // 添加好友 state
+  public stateForAddFriends: { type: string, pageIndex: number, search: string, contacts: any[] } = {
+    type: 'username',            // 查询类型
+    pageIndex: 1,         // 第一页
+    search: '',           // 查询关键此
+    contacts: [],         // 联系人列表
   };
 
-  // 添加群组保存信息
+  // 添加群组 state
   public stateForAddGroup: { groupName: string, groupId: number } = {
     groupName: '',
     groupId: 0
   };
 
-  constructor() { }
+  constructor(private chatHttpService: ChatHttpService) { }
 
   ngOnInit() {
   }
 
   ngDoCheck() {
     this.currentModalTpl = this[this.modalType + 'Tpl'] || '';
+    // 加载联系人列表
+    if (this.modalType === 'addFriends' && this.stateForAddFriends.contacts.length === 0 && !requestFlag) {
+      requestFlag = true;
+      this.getContactInfos();
+    }
+  }
+
+  getContactInfos() {
+    const { type, pageIndex, search } = this.stateForAddFriends;
+    this.chatHttpService.getContactInfos({ type, pageIndex, search, pageSize: 5 })
+      .subscribe((result) => {
+        this.stateForAddFriends.contacts = result.data.contacts;
+        console.log(result);
+      });
   }
 
   public handleCancelModal(): void {
@@ -62,8 +81,8 @@ export class ChatContactsModalComponent implements OnInit, DoCheck {
   public handleOkModal(): void {
     const modalInfoMap: { [key: string]: { state: any, reset: Function }  } = {
       modifyInfo: { state: this.stateForModifyInfo, reset: this.resetStateForModifyInfo.bind(this) },
-      addFriends: { state: this.stateForAddFriends, reset: this.resetStateForAddFriends.bind(this) },
-      addGroup: { state: this.stateForAddGroup, reset: this.resetStateForAddGroup.bind(this) },
+      addFriends: { state: null, reset: this.resetStateForAddFriends.bind(this) },
+      addGroup: { state: null, reset: this.resetStateForAddGroup.bind(this) },
     };
   
     this.onOkModal.emit({ type: this.modalType, params: modalInfoMap[this.modalType].state });
@@ -71,19 +90,19 @@ export class ChatContactsModalComponent implements OnInit, DoCheck {
     modalInfoMap[this.modalType].reset();
   }
 
-  private resetStateForModifyInfo() {
+  private resetStateForModifyInfo(): void {
     this.stateForModifyInfo = { nickname: '', avator: '' };
   }
 
-  private resetStateForAddFriends() {
-    this.stateForAddFriends = { username: '', userId: 0 };
+  private resetStateForAddFriends(): void {
+    this.stateForAddFriends = { type: 'username', pageIndex: 0, search: '', contacts: [] };
   }
 
-  private resetStateForAddGroup() {
+  private resetStateForAddGroup(): void {
     this.stateForAddGroup = { groupName: '', groupId: 0 };
   }
 
-  public uploadImgSuccess(img: string) {
+  public uploadImgSuccess(img: string): void {
     this.stateForModifyInfo.avator = img;
   }
 }

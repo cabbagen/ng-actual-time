@@ -8,7 +8,7 @@
           [nzSrc]="selfInfo.avator"
         >
         </nz-avatar>
-        <span>{{selfInfo.nickname}}</span>
+        <span>{{selfInfo.nickname + ' (' + selfInfo.username + ')'}}</span>
       </div>
       <div class="chat-self-menu" (click)="triggerMenu($event)">
         <i class="anticon anticon-menu-fold"></i>

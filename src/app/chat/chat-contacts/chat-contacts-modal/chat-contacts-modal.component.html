@@ -12,7 +12,6 @@
 >
 </nz-modal>
 
-
 <!-- 修改 IM 用户信息  #template -->
 <ng-template #modifyInfo>
   <div class="row">
@@ -25,10 +24,7 @@
   </div>
   <div class="row">
     <div class="field">我的头像</div>
-    <app-upload-input
-      class="upload-input"
-      (uploadImgSuccess)="uploadImgSuccess($event)"
-    >
+    <app-upload-input class="upload-input" (uploadImgSuccess)="uploadImgSuccess($event)">
     </app-upload-input>
   </div>
 </ng-template>
@@ -39,67 +35,38 @@
   <div class="add-friends-wrap">
     <div class="modal-content-header">
       <nz-input-group nzCompact>
-        <nz-select [ngModel]="'Zhejiang'">
-          <nz-option [nzLabel]="'Zhejiang'" [nzValue]="'Zhejiang'"></nz-option>
-          <nz-option [nzLabel]="'Jiangsu'" [nzValue]="'Jiangsu'"></nz-option>
+        <nz-select [ngModel]="stateForAddFriends.type">
+          <nz-option [nzLabel]="'用户名'" [nzValue]="'username'"></nz-option>
+          <nz-option [nzLabel]="'昵称名'" [nzValue]="'nickname'"></nz-option>
         </nz-select>
-        <input [ngModel]="'Xihu District, Hangzhou'" style="width: 50%;" nz-input>
+        <input [ngModel]="stateForAddFriends.search" style="width: 50%;" nz-input>
         <button nz-button [nzType]="'primary'">
           <span>查询</span>
         </button>
       </nz-input-group>
     </div>
     <div class="modal-content-body">
-      <div class="modal-content-item">
-        <div class="modal-content-item-left">
-          <div class="modal-content-item-avator">
-            <img src="http://localhost:4000/static/images/psWRWRQb.jpg" alt="pic" />
+      <div class="modal-content-item" *ngFor="let contactInfo of stateForAddFriends.contacts">
+          <div class="modal-content-item-left">
+            <div class="modal-content-item-avator">
+              <img src="{{contactInfo.avator}}" alt="pic" />
+            </div>
+            <div class="modal-content-item-description">
+              <p>{{contactInfo.nickname}}</p>
+              <p>{{contactInfo.extra}}</p>
+            </div>
           </div>
-          <div class="modal-content-item-description">
-            <p>苏小夏</p>
-            <p>苏小夏是一个很懒的人!!</p>
+          <div class="modal-content-item-right">
+            <div>申请添加</div>
           </div>
-        </div>
-        <div class="modal-content-item-right">
-          <div>申请添加</div>
-        </div>
-      </div>
-      <div class="modal-content-item">
-        <div class="modal-content-item-left">
-          <div class="modal-content-item-avator">
-            <img src="http://localhost:4000/static/images/psWRWRQb.jpg" alt="pic" />
-          </div>
-          <div class="modal-content-item-description">
-            <p>苏小夏</p>
-            <p>苏小夏是一个很懒的人!!</p>
-          </div>
-        </div>
-        <div class="modal-content-item-right">
-          <div>申请添加</div>
-        </div>
-      </div>
-      <div class="modal-content-item">
-        <div class="modal-content-item-left">
-          <div class="modal-content-item-avator">
-            <img src="http://localhost:4000/static/images/psWRWRQb.jpg" alt="pic" />
-          </div>
-          <div class="modal-content-item-description">
-            <p>苏小夏</p>
-            <p>苏小夏是一个很懒的人!!</p>
-          </div>
-        </div>
-        <div class="modal-content-item-right">
-          <div>申请添加</div>
-        </div>
       </div>
     </div>
-    <div class="modal-content-footer">
+    <div class="modal-content-footer" *ngIf="stateForAddFriends.contacts.length > 0">
       <nz-pagination
-        [(nzPageIndex)]="_current"
-        [nzTotal]="50"
+        [(nzPageIndex)]="stateForAddFriends.pageIndex"
+        [nzTotal]="stateForAddFriends.contacts.length"
         [nzSize]="'small'"
         nzShowTotal
-        nzShowSizeChanger
         nzShowQuickJumper
       >
       </nz-pagination>

@@ -21,9 +21,9 @@ export class ChatContactsComponent implements OnInit, AfterViewInit {
   @Output() onSelectContact = new EventEmitter<ContactsItem>();
 
   public iconInfos: {icon: string, content: string, type: string}[] = [
-    { icon: 'anticon-edit', content: '修改信息', type: 'modifyInfo' },
-    { icon: 'anticon-user-add', content: '添加好友', type: 'addFriends' },
-    { icon: 'anticon-usergroup-add', content: '添加群组', type: 'addGroup' },
+    { icon: 'anticon-edit', content: '修改信息', type: 'imUser' },
+    { icon: 'anticon-user-add', content: '添加好友', type: 'imFriends' },
+    { icon: 'anticon-usergroup-add', content: '添加群组', type: 'imGroups' },
   ];
 
   public isShowMenu: boolean = false;

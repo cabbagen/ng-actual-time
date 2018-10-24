@@ -5,21 +5,21 @@
 <nz-modal
   [(nzVisible)]="isShowModal"
   [nzTitle]="modalTitle"
-  [nzWidth]="'700px'"
-  [nzContent]="currentModalTpl"
+  [nzWidth]="modalTemplateMap[modalType] ? modalTemplateMap[modalType].spec.width : ''"
+  [nzContent]="modalTemplateMap[modalType] ? modalTemplateMap[modalType].tpl : ''"
   (nzOnCancel)="handleCancelModal()"
   (nzOnOk)="handleOkModal()"
 >
 </nz-modal>
 
 <!-- 修改 IM 用户信息  #template -->
-<ng-template #modifyInfo>
+<ng-template #imUser>
   <div class="row">
     <div class="field">我的昵称</div>
     <input
       nz-input
       placeholder="请输入用户昵称"
-      [(ngModel)]="stateForModifyInfo.nickname"
+      [(ngModel)]="modalTemplateMap[modalType].state.nickname"
     />
   </div>
   <div class="row">
@@ -31,7 +31,7 @@
 
 
 <!-- 添加 IM 用户  #template -->
-<ng-template #addFriends>
+<ng-template #imFriends>
   <div class="add-friends-wrap">
     <div class="modal-content-header">
       <nz-input-group nzCompact>
@@ -76,6 +76,6 @@
 
 
 <!-- 添加群组信息  #template -->
-<ng-template #addGroup>
+<ng-template #imGroups>
   <p>this is addGroup</p>
 </ng-template>

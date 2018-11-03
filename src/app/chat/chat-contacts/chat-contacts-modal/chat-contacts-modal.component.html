@@ -5,8 +5,8 @@
 <nz-modal
   [(nzVisible)]="isShowModal"
   [nzTitle]="modalTitle"
-  [nzWidth]="modalTemplateMap[modalType] ? modalTemplateMap[modalType].spec.width : ''"
-  [nzContent]="modalTemplateMap[modalType] ? modalTemplateMap[modalType].tpl : ''"
+  [nzWidth]="modalType !== '' ? modalTemplateMap[modalType].spec.width : ''"
+  [nzContent]="modalType !== '' ? modalTemplateMap[modalType].tpl : ''"
   (nzOnCancel)="handleCancelModal()"
   (nzOnOk)="handleOkModal()"
 >
@@ -35,18 +35,18 @@
   <div class="add-friends-wrap">
     <div class="modal-content-header">
       <nz-input-group nzCompact>
-        <nz-select [ngModel]="stateForAddFriends.type">
+        <nz-select [ngModel]="modalTemplateMap[modalType].state.type">
           <nz-option [nzLabel]="'用户名'" [nzValue]="'username'"></nz-option>
           <nz-option [nzLabel]="'昵称名'" [nzValue]="'nickname'"></nz-option>
         </nz-select>
-        <input [ngModel]="stateForAddFriends.search" style="width: 50%;" nz-input>
+        <input [ngModel]="modalTemplateMap[modalType].state.search" style="width: 50%;" nz-input>
         <button nz-button [nzType]="'primary'">
           <span>查询</span>
         </button>
       </nz-input-group>
     </div>
     <div class="modal-content-body">
-      <div class="modal-content-item" *ngFor="let contactInfo of stateForAddFriends.contacts">
+      <div class="modal-content-item" *ngFor="let contactInfo of modalTemplateMap[modalType].state.contacts">
           <div class="modal-content-item-left">
             <div class="modal-content-item-avator">
               <img src="{{contactInfo.avator}}" alt="pic" />
@@ -61,10 +61,10 @@
           </div>
       </div>
     </div>
-    <div class="modal-content-footer" *ngIf="stateForAddFriends.contacts.length > 0">
+    <div class="modal-content-footer" *ngIf="modalTemplateMap[modalType].state.contacts.length > 0">
       <nz-pagination
-        [(nzPageIndex)]="stateForAddFriends.pageIndex"
-        [nzTotal]="stateForAddFriends.contacts.length"
+        [(nzPageIndex)]="modalTemplateMap[modalType].state.pagination.pageIndex"
+        [nzTotal]="modalTemplateMap[modalType].state.pagination.total"
         [nzSize]="'small'"
         nzShowTotal
         nzShowQuickJumper
@@ -77,5 +77,43 @@
 
 <!-- 添加群组信息  #template -->
 <ng-template #imGroups>
-  <p>this is addGroup</p>
+  <div class="add-groups-wrap">
+    <div class="modal-content-header">
+      <nz-input-group nzCompact>
+        <nz-select [ngModel]="modalTemplateMap[modalType].state.type">
+          <nz-option [nzLabel]="'小组名称'" [nzValue]="'groupname'"></nz-option>
+        </nz-select>
+        <input [ngModel]="modalTemplateMap[modalType].state.search" style="width: 50%;" nz-input>
+        <button nz-button [nzType]="'primary'">
+          <span>查询</span>
+        </button>
+      </nz-input-group>
+    </div>
+    <div class="modal-content-body">
+      <div class="modal-content-item" *ngFor="let groupInfo of modalTemplateMap[modalType].state.groups">
+          <div class="modal-content-item-left">
+            <div class="modal-content-item-avator">
+              <img src="{{groupInfo.group_avator}}" alt="pic" />
+            </div>
+            <div class="modal-content-item-description">
+              <p>{{groupInfo.group_name}}</p>
+              <p>{{groupInfo.group_introduce}}</p>
+            </div>
+          </div>
+          <div class="modal-content-item-right">
+            <div>申请添加</div>
+          </div>
+      </div>
+    </div>
+    <div class="modal-content-footer" *ngIf="modalTemplateMap[modalType].state.groups.length > 0">
+      <nz-pagination
+        [(nzPageIndex)]="modalTemplateMap[modalType].state.pagination.pageIndex"
+        [nzTotal]="modalTemplateMap[modalType].state.pagination.total"
+        [nzSize]="'small'"
+        nzShowTotal
+        nzShowQuickJumper
+      >
+      </nz-pagination>
+    </div>
+  </div>
 </ng-template>

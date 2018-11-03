@@ -14,7 +14,7 @@
         <i class="anticon anticon-menu-fold"></i>
       </div>
       <ul class="chat-self-menu-content" *ngIf="isShowMenu">
-        <li *ngFor="let iconInfo of iconInfos" (click)="showModal(iconInfo.content, iconInfo.type)">
+        <li *ngFor="let iconInfo of iconInfos">
           <i class="{{'anticon ' + iconInfo.icon}}"></i>
           <span>{{iconInfo.content}}</span>
         </li>
@@ -43,12 +43,4 @@
     (selectContact)="selectContact($event)"
   >
   </app-chat-contacts-item>
-  <app-chat-contacts-modal
-    [isShowModal]="modalInfo.isVisible"
-    [modalTitle]="modalInfo.title"
-    [modalType]="modalInfo.type"
-    (onCancelModal)="handleCancelModal($event)"
-    (onOkModal)="handleOkModal($event)"
-  >
-  </app-chat-contacts-modal>
 </div>

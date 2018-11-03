@@ -28,12 +28,6 @@ export class ChatContactsComponent implements OnInit, AfterViewInit {
 
   public isShowMenu: boolean = false;
 
-  public modalInfo: {title: string, type: string, isVisible: boolean} = {
-    title: '',
-    type: '',
-    isVisible: false,
-  };
-
   constructor(private chatHttpService: ChatHttpService, private messageService: NzMessageService) { }
 
   public ngOnInit() {
@@ -50,10 +44,6 @@ export class ChatContactsComponent implements OnInit, AfterViewInit {
     this.isShowMenu = true;
   }
 
-  public showModal(title: string, type: string): void {
-    this.modalInfo = {title, type, isVisible: true};
-  }
-
   public changeChatTab(currentTab: number): void {
     this.onChangeChatTab.emit(currentTab);
   }
@@ -61,25 +51,4 @@ export class ChatContactsComponent implements OnInit, AfterViewInit {
   public selectContact(contact: ContactsItem): void {
     this.onSelectContact.emit(contact);
   }
-
-  public handleOkModal(data): void {
-    console.log('修改用户信息保存', data);
-    const handleFuncMap = {
-      modifyInfo: this.chatHttpService.saveContactInfo.bind(this.chatHttpService),
-    };
-    handleFuncMap[data.type](data.params).subscribe((result) => {
-      if (result.state !== 200) {
-        this.messageService.error(result.msg);
-      } else {
-        // window.location.reload();
-      }
-      console.log('------->', result);
-    });
-    this.modalInfo = { title: '', type: '', isVisible: false };
-  }
-
-  public handleCancelModal(): void {
-    this.modalInfo = { title: '', type: '', isVisible: false };
-  }
-
 }

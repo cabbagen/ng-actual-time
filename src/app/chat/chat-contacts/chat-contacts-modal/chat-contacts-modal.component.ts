@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, TemplateRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, TemplateRef, AfterViewInit, DoCheck } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd';
 import { ModalSpec } from '../../interfaces/chat-contacts-modal-interface';
 import { ChatHttpService } from '../../services/chat.http.service';
@@ -8,7 +8,7 @@ import { ChatHttpService } from '../../services/chat.http.service';
   templateUrl: './chat-contacts-modal.component.html',
   styleUrls: ['./chat-contacts-modal.component.css']
 })
-export class ChatContactsModalComponent implements OnInit, AfterViewInit {
+export class ChatContactsModalComponent implements OnInit, AfterViewInit, DoCheck {
 
   @Input() isShowModal: boolean;
 
@@ -29,37 +29,69 @@ export class ChatContactsModalComponent implements OnInit, AfterViewInit {
   @ViewChild('imGroups')
   public imGroupsWithTpl: TemplateRef<any>;
 
+  // ======= state 信息预定义 ========= //
+  private imUserDef: ModalSpec = {
+    tpl: this.imUserWithTpl,
+    spec: {
+      width: '500px',
+    },
+    state: {
+      nickname: '',
+      avator: '',
+    },
+  };
+
+  private imFriendsDef: ModalSpec = {
+    tpl: this.imFriendsWithTpl,
+    spec: {
+      width: '500px',
+    },
+    state: {
+      type: 'nickname',
+        search: '',
+        pagination: {
+          pageIndex: 1,
+          total: 0,
+        },
+        contacts: [],
+    },
+  };
+
+  private imGroupsDef: ModalSpec = {
+    tpl: this.imGroupsWithTpl,
+    spec: {
+      width: '700px'
+    },
+    state: {
+      type: 'groupname',
+      search: '',
+      pagination: {
+        pageIndex: 1,
+        total: 0,
+      },
+      groups: [],
+    },
+  };
+
+  private lastModalType: string;
+
   // modal template map
   public modalTemplateMap: { [key: string]: ModalSpec } = {
-    imUser: {
-      tpl: this.imUserWithTpl,
-      spec: {
-        width: '500px'
-      },
-      state: {
-        nickname: '',
-        avator: '',
-      },
-    },
-    imFriends: {
-      tpl: this.imFriendsWithTpl,
-      spec: {
-        width: '700px'
-      },
-      state: {},
-    },
-    imGroups: {
-      tpl: this.imGroupsWithTpl,
-      spec: {
-        width: '700px'
-      },
-      state: {},
-    },
+    imUser: this.imUserDef,
+    imFriends: this.imFriendsDef,
+    imGroups: this.imGroupsDef,
   };
 
   constructor(private chatHttpService: ChatHttpService, private messageService: NzMessageService) { }
 
   ngOnInit() {
+  }
+
+  ngDoCheck() {
+    if (this.lastModalType !== this.modalType) {
+      
+    }
+    console.log('modelType', this.modalType);
   }
 
   ngAfterViewInit() {
@@ -69,10 +101,12 @@ export class ChatContactsModalComponent implements OnInit, AfterViewInit {
   }
 
   public handleCancelModal(): void {
+    this.lastModalType = this.modalType;
     this.onCancelModal.emit();
   }
 
   public handleOkModal(): void {
+    this.lastModalType = this.modalType;
     const state = this.modalTemplateMap[this.modalType].state;
     console.log('state: ', state);
     // this.onOkModal.emit();

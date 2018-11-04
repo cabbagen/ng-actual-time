@@ -1,36 +1,34 @@
-<div id="chat-contacts-modal">
+<div id="chat-groups-modal">
   <nz-modal
-    [nzVisible]="isShowContactsModal"
-    [nzTitle]="'添加联系人'"
+    [nzVisible]="isShowGroupsModal"
+    [nzTitle]="'添加群组'"
     [nzWidth]="'700px'"
     [nzContent]="modalContent"
     (nzOnCancel)="handleCancel($event)"
     (nzOnOk)="handleOk($event)"
   >
     <ng-template #modalContent>
-      <div class="add-friends-wrap">
+      <div class="add-groups-wrap">
         <div class="modal-content-header">
           <nz-input-group nzCompact>
-            <nz-select [(ngModel)]="type">
-              <nz-option [nzLabel]="'综合查询'" [nzValue]="1"></nz-option>
-              <nz-option [nzLabel]="'用户名'" [nzValue]="2"></nz-option>
-              <nz-option [nzLabel]="'昵称名'" [nzValue]="3"></nz-option>
+            <nz-select [ngModel]="'groupName'">
+              <nz-option [nzLabel]="'小组名称'" [nzValue]="'groupName'"></nz-option>
             </nz-select>
             <input [(ngModel)]="search" style="width: 50%;" nz-input>
-            <button nz-button [nzType]="'primary'" (click)="searchContacts($event)">
+            <button nz-button [nzType]="'primary'" (click)="searchGroups($event)">
               <span>查询</span>
             </button>
           </nz-input-group>
         </div>
         <div class="modal-content-body">
-          <div class="modal-content-item" *ngFor="let contactInfo of contactInfos">
+          <div class="modal-content-item" *ngFor="let groupInfo of groupInfos">
               <div class="modal-content-item-left">
                 <div class="modal-content-item-avator">
-                  <img src="{{contactInfo.avator}}" alt="pic" />
+                  <img src="{{groupInfo.group_avator}}" alt="pic" />
                 </div>
                 <div class="modal-content-item-description">
-                  <p>{{contactInfo.nickname}}</p>
-                  <p>{{contactInfo.extra}}</p>
+                  <p>{{groupInfo.group_name}}</p>
+                  <p>{{groupInfo.group_introduce}}</p>
                 </div>
               </div>
               <div class="modal-content-item-right">
@@ -38,7 +36,7 @@
               </div>
           </div>
         </div>
-        <div class="modal-content-footer" *ngIf="contactInfos.length > 0">
+        <div class="modal-content-footer" *ngIf="groupInfos.length > 0">
           <nz-pagination
             [(nzPageIndex)]="pagination.pageIndex"
             [nzPageSize]="pagination.pageSize"
@@ -52,4 +50,5 @@
         </div>
       </div>
     </ng-template>
-</nz-modal>
+  </nz-modal>
+</div>

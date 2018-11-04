@@ -1,0 +1,25 @@
+<div id="chat-self-modal">
+  <nz-modal
+    [nzVisible]="isShowSelfModal"
+    [nzTitle]="'编辑信息'"
+    [nzContent]="modalContent"
+    (nzOnCancel)="handleCancel($event)"
+    (nzOnOk)="handleOk($event)"
+  >
+    <ng-template #modalContent>
+      <div class="row">
+        <div class="field">我的昵称</div>
+        <input
+          nz-input
+          placeholder="请输入用户昵称"
+          [(ngModel)]="nickname"
+        />
+      </div>
+      <div class="row">
+        <div class="field">我的头像</div>
+        <app-upload-input class="upload-input" (uploadImgSuccess)="uploadImgSuccess($event)">
+        </app-upload-input>
+      </div>
+    </ng-template>
+  </nz-modal>
+</div>

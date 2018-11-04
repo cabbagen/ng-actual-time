@@ -49,7 +49,7 @@ export class ChatHttpService {
   }
 
   // 获取联系人信息
-  public getContactInfos(searchInfo: { type: string, pageIndex: number, pageSize: number, search: string }) {
+  public getContactInfos(searchInfo: { type: number, pageIndex: number, pageSize: number, search: string }) {
     const { appkey } = utils.getAuthInfo();
 
     if (!appkey) {
@@ -59,6 +59,20 @@ export class ChatHttpService {
     const params = Object.assign({}, searchInfo, { appkey });
 
     return this.http.post(`${domain}/getContactInfos`, params)
+      .pipe(retry(3), catchError(this.handleError));
+  }
+
+  // 获取群组信息
+  public getGroupInfos(searchInfo: { pageIndex: number, pageSize: number, search: string }) {
+    const { appkey } = utils.getAuthInfo();
+
+    if (!appkey) {
+      throw new Error(this.authErrorMsg);
+    }
+
+    const params = Object.assign({}, searchInfo, { appkey });
+
+    return this.http.post(`${domain}/getGroupInfos`, params)
       .pipe(retry(3), catchError(this.handleError));
   }
 }

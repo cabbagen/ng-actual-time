@@ -1,0 +1,12 @@
+.row {
+  display: flex;
+  line-height: 28px;
+  height: 28px;
+  margin-bottom: 12px;
+}
+.row .field {
+  width: 80px;
+}
+.upload-input {
+  width: 100%;
+}

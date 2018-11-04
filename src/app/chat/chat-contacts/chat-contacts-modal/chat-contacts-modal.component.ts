@@ -1,6 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, TemplateRef, AfterViewInit, DoCheck } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd';
-import { ModalSpec } from '../../interfaces/chat-contacts-modal-interface';
 import { ChatHttpService } from '../../services/chat.http.service';
 
 @Component({
@@ -8,112 +7,59 @@ import { ChatHttpService } from '../../services/chat.http.service';
   templateUrl: './chat-contacts-modal.component.html',
   styleUrls: ['./chat-contacts-modal.component.css']
 })
-export class ChatContactsModalComponent implements OnInit, AfterViewInit, DoCheck {
+export class ChatContactsModalComponent implements OnInit {
 
-  @Input() isShowModal: boolean;
+  @Input() isShowContactsModal: boolean;
 
-  @Input() modalTitle: string;
+  @Output() handleContactsModalCancel = new EventEmitter();
 
-  @Input() modalType: string;
+  // -   1 => 综合查询,  2 => nickname,  3 => username
+  public type: number = 1;
 
-  @Output() onCancelModal = new EventEmitter();
+  public search: string = '';
 
-  @Output() onOkModal = new EventEmitter();
+  public contactInfos: any[] = [];
 
-  @ViewChild('imUser')
-  public imUserWithTpl: TemplateRef<any>;
-
-  @ViewChild('imFriends')
-  public imFriendsWithTpl: TemplateRef<any>;
-
-  @ViewChild('imGroups')
-  public imGroupsWithTpl: TemplateRef<any>;
-
-  // ======= state 信息预定义 ========= //
-  private imUserDef: ModalSpec = {
-    tpl: this.imUserWithTpl,
-    spec: {
-      width: '500px',
-    },
-    state: {
-      nickname: '',
-      avator: '',
-    },
+  public pagination: { pageIndex: number, pageSize: number, total: number } = {
+    pageIndex: 1,
+    pageSize: 5,
+    total: 0,
   };
 
-  private imFriendsDef: ModalSpec = {
-    tpl: this.imFriendsWithTpl,
-    spec: {
-      width: '500px',
-    },
-    state: {
-      type: 'nickname',
-        search: '',
-        pagination: {
-          pageIndex: 1,
-          total: 0,
-        },
-        contacts: [],
-    },
-  };
+  constructor(
+    private chatHttpService: ChatHttpService,
+    private messageService: NzMessageService
+  ) { }
 
-  private imGroupsDef: ModalSpec = {
-    tpl: this.imGroupsWithTpl,
-    spec: {
-      width: '700px'
-    },
-    state: {
-      type: 'groupname',
-      search: '',
-      pagination: {
-        pageIndex: 1,
-        total: 0,
-      },
-      groups: [],
-    },
-  };
-
-  private lastModalType: string;
-
-  // modal template map
-  public modalTemplateMap: { [key: string]: ModalSpec } = {
-    imUser: this.imUserDef,
-    imFriends: this.imFriendsDef,
-    imGroups: this.imGroupsDef,
-  };
-
-  constructor(private chatHttpService: ChatHttpService, private messageService: NzMessageService) { }
-
-  ngOnInit() {
+  public ngOnInit() {
+    this.updateContactInfos(1);
   }
 
-  ngDoCheck() {
-    if (this.lastModalType !== this.modalType) {
-      
-    }
-    console.log('modelType', this.modalType);
+  public updateContactInfos(pageIndex) {
+    const { pageSize } = this.pagination;
+    this.chatHttpService.getContactInfos({ type: this.type, pageIndex: pageIndex - 1, pageSize, search: this.search }).subscribe((result) => {
+      if (result.state === 200) {
+        this.contactInfos = result.data.contacts;
+        this.pagination = Object.assign({}, { pageIndex, pageSize, total: result.data.total });
+      } else {
+        this.messageService.error('获取 IM 人员信息失败');
+      }
+    });
   }
 
-  ngAfterViewInit() {
-    this.modalTemplateMap.imUser.tpl = this.imUserWithTpl;
-    this.modalTemplateMap.imFriends.tpl = this.imFriendsWithTpl;
-    this.modalTemplateMap.imGroups.tpl = this.imGroupsWithTpl;
+  public handleCancel() {
+    this.handleContactsModalCancel.emit();
   }
 
-  public handleCancelModal(): void {
-    this.lastModalType = this.modalType;
-    this.onCancelModal.emit();
+  public handleOk() {
+    this.handleContactsModalCancel.emit();
   }
 
-  public handleOkModal(): void {
-    this.lastModalType = this.modalType;
-    const state = this.modalTemplateMap[this.modalType].state;
-    console.log('state: ', state);
-    // this.onOkModal.emit();
+  public searchContacts() {
+    this.updateContactInfos(1);
   }
 
-  public uploadImgSuccess(imgSrc: string) {
-    this.messageService.success('上传成功');
-    this.modalTemplateMap.imUser.state.avator = imgSrc;
+  public handleChangePagination(pageIndex) {
+    this.updateContactInfos(pageIndex);
   }
 }

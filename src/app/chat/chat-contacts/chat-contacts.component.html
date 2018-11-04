@@ -14,7 +14,7 @@
         <i class="anticon anticon-menu-fold"></i>
       </div>
       <ul class="chat-self-menu-content" *ngIf="isShowMenu">
-        <li *ngFor="let iconInfo of iconInfos">
+        <li *ngFor="let iconInfo of iconInfos" (click)="showMenuModal(iconInfo.type)">
           <i class="{{'anticon ' + iconInfo.icon}}"></i>
           <span>{{iconInfo.content}}</span>
         </li>
@@ -44,3 +44,20 @@
   >
   </app-chat-contacts-item>
 </div>
+<!-- 菜单的三个 modal -->
+<app-chat-self-modal
+  [isShowSelfModal]="isShowSelfModal"
+  (handleSelfModalOk)="handleSelfModalOk($event)"
+  (handleSelfModalCancel)="handleSelfModalCancel($event)"
+>
+</app-chat-self-modal>
+<app-chat-contacts-modal
+  [isShowContactsModal]="isShowContactsModal"
+  (handleContactsModalCancel)="handleContactsModalCancel($event)"
+>
+</app-chat-contacts-modal>
+<app-chat-groups-modal
+  [isShowGroupsModal]="isShowGroupsModal"
+  (handleGroupsModalCancel)="handleGroupsModalCancel($event)"
+>
+</app-chat-groups-modal>

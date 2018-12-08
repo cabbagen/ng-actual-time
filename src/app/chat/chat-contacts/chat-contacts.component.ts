@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, EventEmitter, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd';
 import { ChatHttpService } from '../services/chat.http.service';
 import { ContactsItem } from '../interfaces/chat-contact.interface';
@@ -8,7 +8,7 @@ import { ContactsItem } from '../interfaces/chat-contact.interface';
   templateUrl: './chat-contacts.component.html',
   styleUrls: ['./chat-contacts.component.css']
 })
-export class ChatContactsComponent implements OnInit, AfterViewInit {
+export class ChatContactsComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input() selfInfo;
 
@@ -35,6 +35,12 @@ export class ChatContactsComponent implements OnInit, AfterViewInit {
 
   public isShowGroupsModal: boolean = false;
 
+  // search 栏文本
+  public searchText: string = "";
+
+  // 适配筛选后的联系人列表
+  public adaptedCurrentContacts: ContactsItem[] = [];
+
   constructor(private chatHttpService: ChatHttpService, private messageService: NzMessageService) { }
 
   public ngOnInit() {
@@ -44,6 +50,23 @@ export class ChatContactsComponent implements OnInit, AfterViewInit {
     document.body.addEventListener('click', () => {
       this.isShowMenu = false;
     }, false);
+  }
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    const currentContacts: ContactsItem[] = changes.currentContacts.currentValue;
+    this.updateAdaptedCurrentContacts(currentContacts);
+  }
+
+  public handleChangeSearch(): void {
+    this.updateAdaptedCurrentContacts(this.currentContacts);
+  }
+
+  private updateAdaptedCurrentContacts(currentContacts: ContactsItem[]): void {
+    const searchRegExp = new RegExp(this.searchText);
+
+    this.adaptedCurrentContacts = this.searchText === ''
+      ? currentContacts
+      : currentContacts.filter((contact) => searchRegExp.test(contact.nickname))
   }
 
   public triggerMenu($event): void {
@@ -60,7 +83,6 @@ export class ChatContactsComponent implements OnInit, AfterViewInit {
   }
 
   public showMenuModal(modalType) {
-    console.log('modalType: ', modalType);
     this[modalType] = true;
   }
 

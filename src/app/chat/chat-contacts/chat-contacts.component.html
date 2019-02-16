@@ -52,17 +52,20 @@
 </div>
 <!-- 菜单的三个 modal -->
 <app-chat-self-modal
+  [selfInfo]="selfInfo"
   [isShowSelfModal]="isShowSelfModal"
   (handleSelfModalOk)="handleSelfModalOk($event)"
   (handleSelfModalCancel)="handleSelfModalCancel($event)"
 >
 </app-chat-self-modal>
 <app-chat-contacts-modal
+  [selfInfo]="selfInfo"
   [isShowContactsModal]="isShowContactsModal"
   (handleContactsModalCancel)="handleContactsModalCancel($event)"
 >
 </app-chat-contacts-modal>
 <app-chat-groups-modal
+  [selfInfo]="selfInfo"
   [isShowGroupsModal]="isShowGroupsModal"
   (handleGroupsModalCancel)="handleGroupsModalCancel($event)"
 >

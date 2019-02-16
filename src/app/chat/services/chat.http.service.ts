@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { catchError, retry, throttle } from 'rxjs/operators';
+import { catchError, retry } from 'rxjs/operators';
 import { domain } from '../../config';
 import * as utils from '../../utils/utils';
 
@@ -10,17 +10,20 @@ export class ChatHttpService {
 
   private authErrorMsg: string = '获取 鉴权信息 错误';
 
+  private authInfo: { appkey: string, id: string } = null;
+
   constructor(private http: HttpClient) {
+    this.authInfo = utils.getAuthInfo();
   }
 
   // 登录 application 获取用户信息
   public loginApplication() {
-    const { appkey, id } = utils.getAuthInfo();
-    
-    if (!appkey || !id) throw new Error(this.authErrorMsg);
+    if (!this.authInfo) {
+      throw new Error(this.authErrorMsg);
+    }
 
-    return this.http.get(`${domain}/getContactInfo?${utils.serialize({appkey, id})}`)
-      .pipe(retry(3),catchError(this.handleError));
+    return this.http.get(`${domain}/getContactInfo`, { headers: this.authInfo})
+      .pipe(retry(3), catchError(this.handleError));
   }
 
   // 响应错误处理
@@ -36,43 +39,31 @@ export class ChatHttpService {
 
   // 保存用户编辑信息
   public saveContactInfo(contactInfo: { avator: string, nickname: string }) {
-    const { appkey, id } = utils.getAuthInfo();
-
-    if (!appkey || !id) {
+    if (!this.authInfo) {
       throw new Error(this.authErrorMsg);
     }
     
-    const params =  Object.assign({}, contactInfo, { appkey, id });
-
-    return this.http.post(`${domain}/saveContactInfo`, params)
+    return this.http.post(`${domain}/saveContactInfo`, contactInfo, { headers: this.authInfo })
       .pipe(retry(3), catchError(this.handleError));
   }
 
   // 获取联系人信息
   public getContactInfos(searchInfo: { type: number, pageIndex: number, pageSize: number, search: string }) {
-    const { appkey } = utils.getAuthInfo();
-
-    if (!appkey) {
+    if (!this.authInfo) {
       throw new Error(this.authErrorMsg);
     }
 
-    const params = Object.assign({}, searchInfo, { appkey });
-
-    return this.http.post(`${domain}/getContactInfos`, params)
+    return this.http.post(`${domain}/getContactInfos`, searchInfo, { headers: this.authInfo })
       .pipe(retry(3), catchError(this.handleError));
   }
 
   // 获取群组信息
   public getGroupInfos(searchInfo: { pageIndex: number, pageSize: number, search: string }) {
-    const { appkey } = utils.getAuthInfo();
-
-    if (!appkey) {
+    if (!this.authInfo) {
       throw new Error(this.authErrorMsg);
     }
 
-    const params = Object.assign({}, searchInfo, { appkey });
-
-    return this.http.post(`${domain}/getGroupInfos`, params)
+    return this.http.post(`${domain}/getGroupInfos`, searchInfo, { headers: this.authInfo })
       .pipe(retry(3), catchError(this.handleError));
   }
 }

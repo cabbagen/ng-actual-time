@@ -35,7 +35,6 @@
   text-align: center;
   height: 25px;
   line-height: 25px;
-  background-color: #23ea7c;
   color: #ffffff;
   position: absolute;
   bottom: 0px;
@@ -43,8 +42,17 @@
   border-radius: 3px;
   cursor: pointer;
 }
-.modal-content-item-right div:hover {
+.modal-content-item-right .is-can-opecation {
+  background-color: #23ea7c;
+}
+.modal-content-item-right .is-can-opecation:hover {
   background-color: #12da6b;
+}
+.modal-content-item-right .not-can-opecation {
+  background-color: #108ee9;
+}
+.modal-content-item-right .not-can-opecation:hover {
+  background-color: #007dd8;
 }
 .modal-content-footer {
   margin-top: 20px;

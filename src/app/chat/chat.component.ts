@@ -5,7 +5,8 @@ import { ChatSocketService } from './services/chat.socket.service';
 import { ContactsItem } from './interfaces/chat-contact.interface';
 import { Channel } from './interfaces/chat-channel.interface';
 import { ChatMessage, ChatFullMessage } from './interfaces/chat-message.interface';
-import { EventCenter } from './services/chat.event';
+import { EventCenter, NoticeEventCenter } from './services/chat.event';
+import { IMNoticeForAddFriend } from './interfaces/chat-notice.interface';
 import * as utils from '../utils/utils';
 
 @Component({
@@ -129,7 +130,7 @@ export class ChatComponent implements OnInit {
     const events = [
       { eventName: EventCenter.im_create_channel, responseCallBack: this.handleCreateChannel.bind(this) },
       { eventName: EventCenter.im_signal_chat, responseCallBack: this.handleSignalChat.bind(this) },
-      { eventName: EventCenter.im_notice, responseCallBack: this.handleNotice.bind(this) },
+      { eventName: EventCenter.im_notice, responseCallBack: this.handleNoticeDispatch.bind(this) },
     ];
     this.chatSocketService.registeEventListener(events);
   }
@@ -152,9 +153,11 @@ export class ChatComponent implements OnInit {
 
   // 处理单聊接收消息
   private handleSignalChat(data) {
-    console.log('接收到消息：', data);
+    // console.log('接收到消息：', data);
     const fullMessage = this.adapteSignalMessage(data);
 
+    console.log('this.currentContact: ', this.currentContact);
+    console.log('fullMessage: ', fullMessage);
     // 更新消息中心
     if (typeof this.chatChannelCenter[data.message_channel] !== 'undefined') {
       this.chatChannelCenter[data.message_channel].push(fullMessage);
@@ -216,8 +219,34 @@ export class ChatComponent implements OnInit {
   }
 
   // 处理通知消息
-  private handleNotice() {
-    // ... 暂时搁置
+  private handleNoticeDispatch(data) {
+    console.log('我接收到的通知反馈信息', data);
+
+    // 不是自己的消息，不需要接收
+    if (data.target_contact_id !== this.selfInfo._id) {
+      return;
+    }
+
+    // 接收到的消息统一处理
+    const dispatcher: { [key: string]: Function } = {
+      [NoticeEventCenter.im_notice_add_friend]: this.handleAddFriendNotice,
+    }
+
+    dispatcher[data.notice_type](data);
+  }
+
+  private handleAddFriendNotice(data: IMNoticeForAddFriend) {
+    this.nzModalService.confirm({
+      title: '添加好友提示',
+      content: `${data.source_contact_nickname}请求添加您为好友`,
+      showConfirmLoading: true,
+      onCancel() {},
+      onOk() {
+        return new Promise((resolve) => {
+          setTimeout(resolve, 1000);
+        });
+      }
+    });
   }
 
   public changeChatTab(currentTab: number): void {

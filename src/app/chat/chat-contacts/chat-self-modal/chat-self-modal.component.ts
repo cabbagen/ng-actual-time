@@ -11,6 +11,8 @@ export class ChatSelfModalComponent implements OnInit {
 
   @Input() isShowSelfModal: boolean;
 
+  @Input() selfInfo: any;
+
   @Output() handleSelfModalOk = new EventEmitter()
 
   @Output() handleSelfModalCancel = new EventEmitter();

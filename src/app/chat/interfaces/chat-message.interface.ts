@@ -9,17 +9,18 @@ export interface ChatMessage {
 };
 
 export interface ChatGroupMessage {
-  type: number,
-  source: string,
-  target: string,
-  content: string,
+  type: number;
+  source: string;
+  target: string;
+  content: string;
   appkey?: string;
 }
 
 export interface ChatFullMessage {
-  type: number,
-  time: string,
-  content: string,
-  source: ContactsItem,
-  target: ContactsItem,
+  type: number;
+  time: string;
+  content: string;
+  source: ContactsItem;
+  target: ContactsItem;
+  appkey?: string;
 };

@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { chatSocketURL } from '../../config';
 import { ChatMessage } from '../interfaces/chat-message.interface';
 import { EventRegiste } from '../interfaces/chat.event.interface';
-import { EventCenter } from './chat.event';
+import { IMNoticeForAddFriend } from '../interfaces/chat-notice.interface';
+import { EventCenter, NoticeEventCenter } from './chat.event';
 import * as utils from '../../utils/utils';
 
 declare const window;
@@ -47,5 +48,10 @@ export class ChatSocketService {
   // 单聊发送消息
   public sendSignalMessage(message: ChatMessage) {
     this.chatSocket.emit(EventCenter.im_signal_chat, message);
+  }
+
+  // 发送加好友通知
+  public sendNoticeForAddFriend(message: IMNoticeForAddFriend) {
+    this.chatSocket.emit(EventCenter.im_notice, message);
   }
 }

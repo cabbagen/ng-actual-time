@@ -11,6 +11,8 @@ export class ChatGroupsModalComponent implements OnInit {
 
   @Input() isShowGroupsModal: boolean;
 
+  @Input() selfInfo: any;
+
   @Output() handleGroupsModalCancel = new EventEmitter();
 
   public search: string = '';

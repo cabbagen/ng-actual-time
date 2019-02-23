@@ -44,7 +44,7 @@ export class ChatHttpService {
     }
     
     return this.http.post(`${domain}/saveContactInfo`, contactInfo, { headers: this.authInfo })
-      .pipe(retry(3), catchError(this.handleError));
+      .pipe(catchError(this.handleError));
   }
 
   // 获取联系人信息
@@ -54,7 +54,7 @@ export class ChatHttpService {
     }
 
     return this.http.post(`${domain}/getContactInfos`, searchInfo, { headers: this.authInfo })
-      .pipe(retry(3), catchError(this.handleError));
+      .pipe(catchError(this.handleError));
   }
 
   // 获取群组信息
@@ -64,6 +64,35 @@ export class ChatHttpService {
     }
 
     return this.http.post(`${domain}/getGroupInfos`, searchInfo, { headers: this.authInfo })
-      .pipe(retry(3), catchError(this.handleError));
+      .pipe(catchError(this.handleError));
+  }
+
+  // 添加好友
+  public createContactFriend(contactId: string, friendId: string) {
+    if (!this.authInfo) {
+      throw new Error(this.authErrorMsg);
+    }
+
+    return this.http.post(`${domain}/createContactFriend`, { contactId, friendId }, { headers: this.authInfo })
+      .pipe(catchError(this.handleError));
+  }
+
+  // 删除联系人好友
+  public removeContactFriend(contactId: string, friendId: string) {
+    if (!this.authInfo) {
+      throw new Error(this.authErrorMsg);
+    }
+
+    return this.http.post(`${domain}/removeContactFriend`, { contactId, friendId }, { headers: this.authInfo })
+      .pipe(catchError(this.handleError));
+  }
+
+  public contactJoinGroup(contactId: string, groupId: string) {
+    if (!this.authInfo) {
+      throw new Error(this.authErrorMsg);
+    }
+
+    return this.http.post(`${domain}/contactJoinGroup`, { contactId, groupId }, { headers: this.authInfo })
+      .pipe(catchError(this.handleError));
   }
 }

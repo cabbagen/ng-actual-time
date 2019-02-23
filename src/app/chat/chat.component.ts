@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { NzModalService, NzNotificationService } from 'ng-zorro-antd';
+import { NzModalService, NzNotificationService, NzMessageService } from 'ng-zorro-antd';
 import { ChatHttpService } from './services/chat.http.service';
 import { ChatSocketService } from './services/chat.socket.service';
 import { ContactsItem } from './interfaces/chat-contact.interface';
 import { Channel } from './interfaces/chat-channel.interface';
 import { ChatMessage, ChatFullMessage } from './interfaces/chat-message.interface';
 import { EventCenter, NoticeEventCenter } from './services/chat.event';
-import { IMNoticeForAddFriend } from './interfaces/chat-notice.interface';
+import { IMNoticeForAddFriend, IMNoticeForAddGroup } from './interfaces/chat-notice.interface';
 import * as utils from '../utils/utils';
 
 @Component({
@@ -58,7 +58,8 @@ export class ChatComponent implements OnInit {
     private chatHttpService: ChatHttpService,
     private chatSocketService: ChatSocketService,
     private nzModalService: NzModalService,
-    private nzNotificationService: NzNotificationService
+    private nzNotificationService: NzNotificationService,
+    private nzMessageService: NzMessageService,
   ) {}
 
   public ngOnInit() {
@@ -79,7 +80,7 @@ export class ChatComponent implements OnInit {
   }
 
   private updateCurrentContacts(tabIndex: number): void {
-    this.currentContacts = this[ this.tabIndexText[tabIndex] ];
+    this.currentContacts = this[this.tabIndexText[tabIndex]];
   }
 
   private adapteRecentContacts(recentContacts: any[]): ContactsItem[] {
@@ -229,21 +230,52 @@ export class ChatComponent implements OnInit {
 
     // 接收到的消息统一处理
     const dispatcher: { [key: string]: Function } = {
-      [NoticeEventCenter.im_notice_add_friend]: this.handleAddFriendNotice,
+      [NoticeEventCenter.im_notice_add_friend]: this.handleAddFriendNotice.bind(this),
+      [NoticeEventCenter.im_notice_add_group]: this.handleAddGroupNotice.bind(this),
     }
 
     dispatcher[data.notice_type](data);
   }
 
   private handleAddFriendNotice(data: IMNoticeForAddFriend) {
-    this.nzModalService.confirm({
+    var that = this;
+    that.nzModalService.confirm({
       title: '添加好友提示',
       content: `${data.source_contact_nickname}请求添加您为好友`,
       showConfirmLoading: true,
       onCancel() {},
       onOk() {
         return new Promise((resolve) => {
-          setTimeout(resolve, 1000);
+          that.chatHttpService.createContactFriend(data.target_contact_id, data.source_contact_id).subscribe((result) => {
+            if (result.state === 200) {
+              that.nzMessageService.create('success', "已添加，请稍后刷新重试");
+            } else {
+              that.nzMessageService.create('warning', result.message);
+            }
+            resolve();
+          });
+        });
+      }
+    });
+  }
+
+  private handleAddGroupNotice(data: IMNoticeForAddGroup) {
+    const that = this;
+    that.nzModalService.confirm({
+      title: '申请加群提示',
+      content: `${data.source_contact_nickname}请求加入${data.target_group_name}`,
+      showConfirmLoading: true,
+      onCancel() {},
+      onOk() {
+        return new Promise((resolve) => {
+          that.chatHttpService.contactJoinGroup(data.source_contact_id, data.target_group_id).subscribe((result) => {
+            if (result.state === 200) {
+              that.nzMessageService.create('success', "已添加，请稍后刷新重试");
+            } else {
+              that.nzMessageService.create('warning', result.message);
+            }
+            resolve()
+          })
         });
       }
     });
@@ -257,6 +289,11 @@ export class ChatComponent implements OnInit {
   // 选择联系人
   // 创建聊天通道 - 切换当前聊天对象 - 加载对应的聊天记录
   public selectContact(contact: ContactsItem): void {
+
+    // -------
+    console.log('contact: ', contact);
+
+
     // 当选择聊天人之后，取消未读消息提示
     if (contact.unReadMessages && contact.unReadMessages > 0) {
       contact.unReadMessages = 0;
@@ -268,18 +305,28 @@ export class ChatComponent implements OnInit {
       sourceId: this.selfInfo._id,
       targetId: contact.id,
       appkey: this.appkey,
-      channelType: this.currentTab.toString(),
+      // 1 => 单聊通道
+      // 2 => 群聊通道
+      channelType: this.currentTab <= 1 ? '1' : '2',
     };
 
     this.chatSocketService.createIMChannel(createChannelInfo);
-    this.updateCurrentMessages(createChannelInfo.sourceId, createChannelInfo.targetId);
+    this.updateCurrentMessages(createChannelInfo.channelType, createChannelInfo.sourceId, createChannelInfo.targetId);
   }
 
   // 当切换联系人的时候，加载之前的聊天记录
-  private updateCurrentMessages(sourceId, targetId: string) {
-    const channelIds: string[] = [`${sourceId}@@${targetId}`, `${targetId}@@${sourceId}`];
+  private updateCurrentMessages(channelType, sourceId, targetId: string) {
 
     this.currentMessages = [];
+
+    // 群聊
+    if (channelType === 2) {
+      this.currentMessages = this.chatChannelCenter[targetId];
+      return;
+    }
+
+    // 单聊
+    const channelIds: string[] = [`${sourceId}@@${targetId}`, `${targetId}@@${sourceId}`];
 
     for (const prop in this.chatChannelCenter) {
       if (channelIds.indexOf(prop) > -1) {
@@ -303,6 +350,14 @@ export class ChatComponent implements OnInit {
       appkey: this.appkey,
     };
 
-    this.chatSocketService.sendSignalMessage(msgItem);
+    const isGroupMessage = this.currentTab > 1;
+
+    if (!isGroupMessage) {
+      this.chatSocketService.sendSignalMessage(msgItem);
+      return;
+    }
+
+    console.log('发送群聊消息：', msgItem);
+
   }
 }

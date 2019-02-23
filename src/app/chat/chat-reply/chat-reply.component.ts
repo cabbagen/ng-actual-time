@@ -26,5 +26,4 @@ export class ChatReplyComponent implements OnInit {
       this.sendMessage();
     }
   }
-
 }

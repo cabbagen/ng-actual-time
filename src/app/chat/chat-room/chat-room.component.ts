@@ -18,14 +18,14 @@ export class ChatRoomComponent implements OnInit, DoCheck {
 
   constructor() { }
 
-  ngOnInit() {
+  public ngOnInit() {
   }
 
-  ngDoCheck() {
+  public ngDoCheck() {
     this.handleChatRoomScrollToBottom();
   }
 
-  handleChatRoomScrollToBottom(): void {
+  public handleChatRoomScrollToBottom(): void {
     const element: Element = document.getElementById('chat-room-content');
     const neededDistanceToBottom: number = element.scrollHeight - element.clientHeight;
 
@@ -34,12 +34,12 @@ export class ChatRoomComponent implements OnInit, DoCheck {
     }
   }
 
-  isMySelf(chatFullMessage: ChatFullMessage): boolean {
+  public isMySelf(chatFullMessage: ChatFullMessage): boolean {
     const source: ContactsItem = chatFullMessage.source;
     return this.selfInfo._id === source.id;
   }
 
-  formatTime(time): string {
+  public formatTime(time): string {
     return formatTime(time);
   }
 }

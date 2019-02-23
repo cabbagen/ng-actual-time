@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { chatSocketURL } from '../../config';
-import { ChatMessage } from '../interfaces/chat-message.interface';
+import { ChatMessage, ChatGroupMessage } from '../interfaces/chat-message.interface';
 import { EventRegiste } from '../interfaces/chat.event.interface';
-import { IMNoticeForAddFriend } from '../interfaces/chat-notice.interface';
-import { EventCenter, NoticeEventCenter } from './chat.event';
+import { IMNoticeForAddFriend, IMNoticeForAddGroup } from '../interfaces/chat-notice.interface';
+import { EventCenter } from './chat.event';
 import * as utils from '../../utils/utils';
 
 declare const window;
@@ -50,8 +50,18 @@ export class ChatSocketService {
     this.chatSocket.emit(EventCenter.im_signal_chat, message);
   }
 
+  // 群聊发送消息
+  public sendGroupMessage(message: ChatGroupMessage) {
+    console.log('send group message: ', message);
+  }
+
   // 发送加好友通知
   public sendNoticeForAddFriend(message: IMNoticeForAddFriend) {
+    this.chatSocket.emit(EventCenter.im_notice, message);
+  }
+
+  // 发送加群通知
+  public sendNoticeForAddGroup(message: IMNoticeForAddGroup) {
     this.chatSocket.emit(EventCenter.im_notice, message);
   }
 }

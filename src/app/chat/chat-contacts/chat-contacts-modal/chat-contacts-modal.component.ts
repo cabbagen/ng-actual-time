@@ -41,10 +41,12 @@ export class ChatContactsModalComponent implements OnInit {
     this.updateContactInfos(1);
   }
 
-  public updateContactInfos(pageIndex) {
+  public updateContactInfos(pageIndex: number) {
     const { pageSize } = this.pagination;
     const { friends = [] } = this.selfInfo;
-    const friendIds = friends.map(friend => friend._id);
+    const friendIds = friends.map((friend: any) => {
+      return friend._id
+    });
 
     this.chatHttpService.getContactInfos({ type: this.type, pageIndex: pageIndex - 1, pageSize, search: this.search }).subscribe((result) => {
       
@@ -55,7 +57,7 @@ export class ChatContactsModalComponent implements OnInit {
       }
 
       // 重构好友列表
-      this.contactInfos = result.data.contacts.map((contact) => {
+      this.contactInfos = result.data.contacts.map((contact: any) => {
         return Object.assign({}, contact, { isCan: !(friendIds.indexOf(contact._id) > -1) });
       });
 

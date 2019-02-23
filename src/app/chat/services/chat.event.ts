@@ -10,5 +10,6 @@ export const EventCenter: { [key: string]: string } = {
 
 export const NoticeEventCenter: { [key: string]: string } = {
   im_notice_add_friend: 'im_notice_add_friend',
+  im_notice_add_group: 'im_notice_add_group',
 };
 

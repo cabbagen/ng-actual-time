@@ -32,7 +32,12 @@
                 </div>
               </div>
               <div class="modal-content-item-right">
-                <div>申请添加</div>
+                <div *ngIf="groupInfo.isCan">
+                  <div class="is-can-opecation" (click)="handleAddGroup(groupInfo)">申请添加</div>
+                </div>
+                <div *ngIf="!groupInfo.isCan">
+                    <div class="not-can-opecation">已添加</div>
+                </div>
               </div>
           </div>
         </div>

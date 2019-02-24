@@ -8,14 +8,6 @@ export interface ChatMessage {
   appkey?: string;
 };
 
-export interface ChatGroupMessage {
-  type: number;
-  source: string;
-  target: string;
-  content: string;
-  appkey?: string;
-}
-
 export interface ChatFullMessage {
   type: number;
   time: string;

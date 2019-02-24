@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { chatSocketURL } from '../../config';
-import { ChatMessage, ChatGroupMessage } from '../interfaces/chat-message.interface';
+import { ChatMessage } from '../interfaces/chat-message.interface';
 import { EventRegiste } from '../interfaces/chat.event.interface';
 import { IMNoticeForAddFriend, IMNoticeForAddGroup } from '../interfaces/chat-notice.interface';
 import { EventCenter } from './chat.event';
@@ -46,13 +46,14 @@ export class ChatSocketService {
   }
 
   // 单聊发送消息
-  public sendSignalMessage(message: ChatMessage) {
-    this.chatSocket.emit(EventCenter.im_signal_chat, message);
+  public sendSingleMessage(message: ChatMessage) {
+    this.chatSocket.emit(EventCenter.im_single_chat, message);
   }
 
   // 群聊发送消息
-  public sendGroupMessage(message: ChatGroupMessage) {
+  public sendGroupMessage(message: ChatMessage) {
     console.log('send group message: ', message);
+    this.chatSocket.emit(EventCenter.im_group_chat, message);
   }
 
   // 发送加好友通知

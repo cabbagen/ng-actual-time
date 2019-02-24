@@ -39,6 +39,7 @@ export class ChatComponent implements OnInit {
 
   // 当前的联系人
   public currentContact: ContactsItem = {
+    type: '',
     id: '',
     avator: '',
     nickname: '',
@@ -88,12 +89,32 @@ export class ChatComponent implements OnInit {
 
     return recentContacts.map((contact) => {
       const isSelf: boolean = id === contact.last_source[0]._id;
-      const otherContact: any = isSelf ? contact.last_target[0] : contact.last_source[0];
+      
+      // 单聊的联系人
+      if (contact.last_target.length > 0) {
+        const otherContact: any = isSelf ? contact.last_target[0] : contact.last_source[0];
+
+        const adaptedContact: ContactsItem = {
+          type: '1',
+          nickname: otherContact.nickname,
+          id: otherContact._id,
+          avator: otherContact.avator,
+          information: contact.last_message,
+          unReadMessages: isSelf ? 0 : contact.total,
+          lastTime: utils.formatTime(contact.last_time),
+        };
+
+        return adaptedContact;
+      }
+
+      // 群聊的联系人
+      const otherContact: any = isSelf ? contact.last_target_group[0] : contact.last_source[0];
 
       const adaptedContact: ContactsItem = {
-        nickname: otherContact.nickname,
+        type: '2',
+        nickname: otherContact.group_name,
         id: otherContact._id,
-        avator: otherContact.avator,
+        avator: otherContact.group_avator,
         information: contact.last_message,
         unReadMessages: isSelf ? 0 : contact.total,
         lastTime: utils.formatTime(contact.last_time),
@@ -106,6 +127,7 @@ export class ChatComponent implements OnInit {
   private adapteFriends(friends: any[]): ContactsItem[] {
     return friends.map((friend) => {
       const adaptedFriend: ContactsItem = {
+        type: '1',
         nickname: friend.nickname,
         id: friend._id,
         avator: friend.avator,
@@ -118,6 +140,7 @@ export class ChatComponent implements OnInit {
   private adapteGroups(groups: any[]): ContactsItem[] {
     return groups.map((group) => {
       const adaptedGroup: ContactsItem = {
+        type: '2',
         nickname: group.group_name,
         id: group._id,
         avator: group.group_avator,
@@ -130,7 +153,8 @@ export class ChatComponent implements OnInit {
   private registeChatSocketEventListener() {
     const events = [
       { eventName: EventCenter.im_create_channel, responseCallBack: this.handleCreateChannel.bind(this) },
-      { eventName: EventCenter.im_signal_chat, responseCallBack: this.handleSignalChat.bind(this) },
+      { eventName: EventCenter.im_single_chat, responseCallBack: this.handleSingleChat.bind(this) },
+      { eventName: EventCenter.im_group_chat, responseCallBack: this.handleGroupChat.bind(this) },
       { eventName: EventCenter.im_notice, responseCallBack: this.handleNoticeDispatch.bind(this) },
     ];
     this.chatSocketService.registeEventListener(events);
@@ -140,7 +164,7 @@ export class ChatComponent implements OnInit {
   // 创建聊天通道之后，会将之前未读的聊天记录反馈回来
   private handleCreateChannel(result) {
     const adaptedData: ChatFullMessage[] = result.data.map(messageInfo => {
-      return this.adapteSignalMessage(messageInfo);
+      return messageInfo.message_target ? this.adapteSingleMessage(messageInfo) : this.adapteGroupMessage(messageInfo);
     });
 
     if (typeof this.chatChannelCenter[result.channelId] !== 'undefined') {
@@ -153,12 +177,10 @@ export class ChatComponent implements OnInit {
   }
 
   // 处理单聊接收消息
-  private handleSignalChat(data) {
+  private handleSingleChat(data) {
     // console.log('接收到消息：', data);
-    const fullMessage = this.adapteSignalMessage(data);
+    const fullMessage: ChatFullMessage = this.adapteSingleMessage(data);
 
-    console.log('this.currentContact: ', this.currentContact);
-    console.log('fullMessage: ', fullMessage);
     // 更新消息中心
     if (typeof this.chatChannelCenter[data.message_channel] !== 'undefined') {
       this.chatChannelCenter[data.message_channel].push(fullMessage);
@@ -166,54 +188,81 @@ export class ChatComponent implements OnInit {
       this.chatChannelCenter[data.message_channel] = [fullMessage];
     }
 
-    // 如果对方为当前的聊天对象，这时候会更新聊天信息队列
-    // 如果对方不是当前的聊天对象，这时候需要给响应的人员添加未读消息提示
-    if (this.currentContact.id === fullMessage.target.id) {
-      this.currentMessages = this.chatChannelCenter[data.message_channel];
-    } else {
-      // 并非为当前联系人，人员列表中要显示消息提醒标示。
-      this.updateRecentContacts(fullMessage.target.id);
-      // 创建 notification 提醒
+    // 如果正在聊天的对象不是当前的对象，需要 给出消息 提醒。
+    // 创建 notification 提醒
+    if (fullMessage.source.id !== this.selfInfo._id) {
       this.createNotification(`接收到来自${fullMessage.source.nickname}的消息`);
+    } else {
+      this.currentMessages = this.chatChannelCenter[data.message_channel];
     }
-  }
-
-  // 聊天对象未读消息 +1
-  private updateRecentContacts(id): void {
-    const updatedRecentContacts = this.recentContacts.map((contact) => {
-      if (contact.id !== id) {
-        return contact;
-      }
-      if (contact.unReadMessages) {
-        contact.unReadMessages += 1;
-      } else {
-        contact.unReadMessages = 1;
-      }
-      return contact;
-    });
-    this.recentContacts = updatedRecentContacts;
   }
 
   private createNotification(content: string): void {
     this.nzNotificationService.info('消息提醒', content);
   }
 
-  private adapteSignalMessage(data: any): ChatFullMessage {
+  private adapteSingleMessage(data: any): ChatFullMessage {
+    console.log('=====>', data);
     const fullMessage: ChatFullMessage = {
       type: data.message_type,
       time: utils.formatTime(data.created_at),
       content: data.message_content,
       source: {
+        type: '1',
         nickname: data.message_source.nickname,
         id: data.message_source._id,
         avator: data.message_source.avator,
         information: data.message_source.extra,
       },
       target: {
+        type: '1',
         nickname: data.message_target.nickname,
         id: data.message_target._id,
         avator: data.message_target.avator,
         information: data.message_target.extra,
+      },
+    };
+    return fullMessage;
+  }
+
+  private handleGroupChat(data) {
+    console.log('接收到群聊消息：', data);
+    const fullMessage: ChatFullMessage = this.adapteGroupMessage(data);
+
+    // 更新消息中心
+    if (typeof this.chatChannelCenter[data.message_channel] !== 'undefined') {
+      this.chatChannelCenter[data.message_channel].push(fullMessage);
+    } else {
+      this.chatChannelCenter[data.message_channel] = [fullMessage];
+    }
+
+    // 如果正在聊天的对象不是当前的对象，需要 给出消息 提醒。
+    // 创建 notification 提醒
+    if (fullMessage.source.id !== this.selfInfo._id) {
+      this.createNotification(`接收到来自群组${fullMessage.target.nickname}的消息`);
+    } else {
+      this.currentMessages = this.chatChannelCenter[data.message_channel];
+    }
+  }
+
+  private adapteGroupMessage(data: any): ChatFullMessage {
+    const fullMessage: ChatFullMessage = {
+      type: data.message_type,
+      time: utils.formatTime(data.created_at),
+      content: data.message_content,
+      source: {
+        type: '1',
+        nickname: data.message_source.nickname,
+        id: data.message_source._id,
+        avator: data.message_source.avator,
+        information: data.message_source.extra,
+      },
+      target: {
+        type: '1',
+        nickname: data.message_target_group.group_name,
+        id: data.message_target_group._id,
+        avator: data.message_target_group.group_avator,
+        information: data.message_target_group.group_introduce,
       },
     };
     return fullMessage;
@@ -289,11 +338,6 @@ export class ChatComponent implements OnInit {
   // 选择联系人
   // 创建聊天通道 - 切换当前聊天对象 - 加载对应的聊天记录
   public selectContact(contact: ContactsItem): void {
-
-    // -------
-    console.log('contact: ', contact);
-
-
     // 当选择聊天人之后，取消未读消息提示
     if (contact.unReadMessages && contact.unReadMessages > 0) {
       contact.unReadMessages = 0;
@@ -305,9 +349,7 @@ export class ChatComponent implements OnInit {
       sourceId: this.selfInfo._id,
       targetId: contact.id,
       appkey: this.appkey,
-      // 1 => 单聊通道
-      // 2 => 群聊通道
-      channelType: this.currentTab <= 1 ? '1' : '2',
+      channelType: contact.type,  // 1 => 单聊通道  2 => 群聊通道
     };
 
     this.chatSocketService.createIMChannel(createChannelInfo);
@@ -315,12 +357,12 @@ export class ChatComponent implements OnInit {
   }
 
   // 当切换联系人的时候，加载之前的聊天记录
-  private updateCurrentMessages(channelType, sourceId, targetId: string) {
+  private updateCurrentMessages(channelType: string, sourceId: string, targetId: string) {
 
     this.currentMessages = [];
 
     // 群聊
-    if (channelType === 2) {
+    if (channelType === '2') {
       this.currentMessages = this.chatChannelCenter[targetId];
       return;
     }
@@ -350,14 +392,13 @@ export class ChatComponent implements OnInit {
       appkey: this.appkey,
     };
 
-    const isGroupMessage = this.currentTab > 1;
+    const isSingleMessage = this.currentContact.type === '1';
 
-    if (!isGroupMessage) {
-      this.chatSocketService.sendSignalMessage(msgItem);
+    if (isSingleMessage) {
+      this.chatSocketService.sendSingleMessage(msgItem);
       return;
     }
 
-    console.log('发送群聊消息：', msgItem);
-
+    this.chatSocketService.sendGroupMessage(msgItem);    
   }
 }

@@ -4,7 +4,8 @@ export const EventCenter: { [key: string]: string } = {
   im_online: 'im_online',
   im_disconnecting: 'disconnecting',
   im_notice: 'im_notice',
-  im_signal_chat: 'im_signal_chat',
+  im_single_chat: 'im_single_chat',
+  im_group_chat: 'im_group_chat',
   im_create_channel: 'im_create_channel',
 };
 

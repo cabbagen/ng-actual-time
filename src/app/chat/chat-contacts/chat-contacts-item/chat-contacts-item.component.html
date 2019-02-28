@@ -23,7 +23,15 @@
         <span class="chat-contact-time">{{contactInfo.lastTime}}</span>
       </div>
       <div class="chat-contact-last-message">
-        <p>{{contactInfo.information}}</p>
+        <p>
+          <span>{{contactInfo.information}}</span>
+          <i
+            *ngIf="currentTab > 0"
+            class="anticon anticon-delete"
+            (click)="deleteContactItem($event, contactInfo)"
+          >
+          </i>
+        </p>
       </div>
     </div>
   </li>

@@ -26,8 +26,10 @@
   margin-top: 5px;
 }
 .chat-contact-last-message p {
-  width: 188px;
-  overflow: hidden;
-  text-overflow:ellipsis;
-  white-space: nowrap;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3px;
+}
+.chat-contact-last-message p i {
+  cursor: pointer;
 }

@@ -22,4 +22,9 @@ export class ChatContactsItemComponent implements OnInit {
   public selectContactItem(contact: ContactsItem) {
     this.selectContact.emit(contact);
   }
+
+  public deleteContactItem(event: Event, contact: ContactsItem) {
+    event.stopPropagation();
+    console.log('delete contact item: ', contact);
+  }
 }

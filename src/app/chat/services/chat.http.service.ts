@@ -95,4 +95,22 @@ export class ChatHttpService {
     return this.http.post(`${domain}/contactJoinGroup`, { contactId, groupId }, { headers: this.authInfo })
       .pipe(catchError(this.handleError));
   }
+
+  public contactLeaveGroup(contactId: string, groupId: string) {
+    if (!this.authInfo) {
+      throw new Error(this.authErrorMsg);
+    }
+
+    return this.http.post(`${domain}/contactLeaveGroup`, { contactId, groupId }, { headers: this.authInfo })
+      .pipe(catchError(this.handleError));
+  }
+
+  public disbandGroup(contactId: string, groupId: string) {
+    if (!this.authInfo) {
+      throw new Error(this.authErrorMsg);
+    }
+
+    return this.http.post(`${domain}/disbandGroup`, { contactId, groupId }, { headers: this.authInfo })
+      .pipe(catchError(this.handleError));
+  }
 }

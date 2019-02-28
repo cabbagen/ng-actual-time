@@ -71,7 +71,7 @@ export class ChatComponent implements OnInit {
     });
   }
 
-  private initAppInfo(response) {
+  private initAppInfo(response: any) {
     const { data } = response;
 
     this.selfInfo = data;
@@ -202,7 +202,6 @@ export class ChatComponent implements OnInit {
   }
 
   private adapteSingleMessage(data: any): ChatFullMessage {
-    console.log('=====>', data);
     const fullMessage: ChatFullMessage = {
       type: data.message_type,
       time: utils.formatTime(data.created_at),
